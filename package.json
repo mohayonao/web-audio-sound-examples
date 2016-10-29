@@ -1,0 +1,55 @@
+{
+  "name": "@mohayonao/web-audio-sound-examples",
+  "description": "Web Audio Sound Examples",
+  "version": "0.0.0",
+  "author": "Nao Yonamine <mohayonao@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/mohayonao/web-audio-sound-examples/issues"
+  },
+  "dependencies": {
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-redux": "^4.4.5",
+    "redux": "^3.6.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.0.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-power-assert": "^1.0.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-register": "^6.16.3",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.0",
+    "enzyme": "^2.4.1",
+    "eslint": "^3.7.1",
+    "eslint-plugin-react": "^6.3.0",
+    "mocha": "^3.1.0",
+    "npm-run-all": "^3.1.0",
+    "power-assert": "^1.4.1",
+    "react-addons-test-utils": "^15.3.2",
+    "run-with-mocha": "^1.0.0",
+    "sinon": "^1.17.6",
+    "watchify": "^3.7.0"
+  },
+  "engines": {
+    "node": ">= 6.0.0"
+  },
+  "homepage": "https://github.com/mohayonao/web-audio-sound-examples/",
+  "license": "MIT",
+  "main": "index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mohayonao/web-audio-sound-examples.git"
+  },
+  "scripts": {
+    "build": "browserify src/main.js --outfile bundle.js --verbose --transform [ babelify ]",
+    "clean": "rm -rf npm-debug.log",
+    "lint": "eslint src test",
+    "postversion": "git push && git push --tags && npm run clean",
+    "preversion": "npm-run-all clean lint test",
+    "test": "mocha",
+    "version": "npm run build && git add bundle.js",
+    "watch": "watchify src/main.js --outfile bundle.js --verbose --transform [ babelify ]"
+  }
+}
