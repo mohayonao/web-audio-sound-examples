@@ -13,7 +13,7 @@ function beep(destination, playbackTime, opts) {
   oscillator.stop(t1);
   oscillator.connect(gain);
 
-  gain.gain.value = 0.5;
+  gain.gain.value = opts.gain;
   gain.connect(destination);
 }
 
