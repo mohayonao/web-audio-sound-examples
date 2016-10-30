@@ -32528,7 +32528,7 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./actions":198,"./inject":202,"./reducers":204,"./views/App":209,"./views/Browser":210,"./views/CodeEditor":211,"./views/SoundPreview":212,"react":187,"react-dom":37,"react-redux":40,"redux":193}],204:[function(require,module,exports){
+},{"./actions":198,"./inject":202,"./reducers":204,"./views/App":211,"./views/Browser":212,"./views/CodeEditor":213,"./views/SoundPreview":214,"react":187,"react-dom":37,"react-redux":40,"redux":193}],204:[function(require,module,exports){
 "use strict";
 
 var initState = {
@@ -32563,16 +32563,24 @@ function example01(audioContext, beep) {
   var destination = audioContext.destination;
   var t0 = audioContext.currentTime;
 
-  beep(destination, t0, { frequency: 3520 });
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  beep(destination, t0, { frequency: mtof(105), gain: 0.5 });
 }
 
 function example02(audioContext, beep) {
   var destination = audioContext.destination;
   var t0 = audioContext.currentTime;
-  var t1 = t0 + 0.075;
+  var t1 = t0 + 0.05;
 
-  beep(destination, t0, { frequency: 3520 });
-  beep(destination, t1, { frequency: 3520 });
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  beep(destination, t0, { frequency: mtof(105), gain: 0.5 });
+  beep(destination, t1, { frequency: mtof(105), gain: 0.25 });
 }
 
 function example03(audioContext, beep) {
@@ -32580,8 +32588,12 @@ function example03(audioContext, beep) {
   var t0 = audioContext.currentTime;
   var t1 = t0 + 0.1;
 
-  beep(destination, t0, { frequency: 3520 });
-  beep(destination, t1, { frequency: 3520 * 2 });
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  beep(destination, t0, { frequency: mtof(105), gain: 0.5 });
+  beep(destination, t1, { frequency: mtof(117), gain: 0.125 });
 }
 
 module.exports = {
@@ -32590,14 +32602,63 @@ module.exports = {
   examples: [example01, example02, example03]
 };
 
-},{"../sounds/beep":207}],206:[function(require,module,exports){
+},{"../sounds/beep":208}],206:[function(require,module,exports){
 "use strict";
 
 module.exports = {
-  beep: require("./beep")
+  beep: require("./beep"),
+  swell: require("./swell")
 };
 
-},{"./beep":205}],207:[function(require,module,exports){
+},{"./beep":205,"./swell":207}],207:[function(require,module,exports){
+"use strict";
+
+function example01(audioContext, swell) {
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  swell(destination, t0, { frequency: mtof(69), duration: 4, gain: 0.25 });
+}
+
+function example02(audioContext, swell) {
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  swell(destination, t0, { frequency: mtof(69), duration: 4, gain: 0.125 });
+  swell(destination, t0, { frequency: mtof(74), duration: 4, gain: 0.125 });
+  swell(destination, t0, { frequency: mtof(79), duration: 4, gain: 0.125 });
+}
+
+function example03(audioContext, swell) {
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+  var t1 = t0 + 4;
+  var t2 = t1 + 2;
+
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  swell(destination, t0, { frequency: mtof(69), duration: 8, gain: 0.125 });
+  swell(destination, t1, { frequency: mtof(79), duration: 6, gain: 0.125 });
+  swell(destination, t2, { frequency: mtof(76), duration: 4, gain: 0.125 });
+}
+
+module.exports = {
+  name: "swell",
+  sound: require("../sounds/swell"),
+  examples: [example01, example02, example03]
+};
+
+},{"../sounds/swell":209}],208:[function(require,module,exports){
 "use strict";
 
 function beep(destination, playbackTime, opts) {
@@ -32613,13 +32674,49 @@ function beep(destination, playbackTime, opts) {
   oscillator.stop(t1);
   oscillator.connect(gain);
 
-  gain.gain.value = 0.5;
+  gain.gain.value = opts.gain;
   gain.connect(destination);
 }
 
 module.exports = beep;
 
-},{}],208:[function(require,module,exports){
+},{}],209:[function(require,module,exports){
+"use strict";
+
+function swell(destination, playbackTime, opts) {
+  var t0 = playbackTime;
+  var t1 = t0 + opts.duration * 0.3;
+  var t2 = t1 + opts.duration * 0.7;
+  var audioContext = destination.context;
+  var oscillator1 = audioContext.createOscillator();
+  var oscillator2 = audioContext.createOscillator();
+  var gain = audioContext.createGain();
+
+  oscillator1.type = "sine";
+  oscillator1.frequency.value = opts.frequency;
+  oscillator1.detune.setValueAtTime(-2, t0);
+  oscillator1.detune.linearRampToValueAtTime(-12, t2);
+  oscillator1.start(t0);
+  oscillator1.stop(t2);
+  oscillator1.connect(gain);
+
+  oscillator2.type = "sine";
+  oscillator2.frequency.value = opts.frequency;
+  oscillator2.detune.setValueAtTime(+2, t0);
+  oscillator2.detune.linearRampToValueAtTime(+12, t2);
+  oscillator2.start(t0);
+  oscillator2.stop(t2);
+  oscillator2.connect(gain);
+
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(opts.gain, t1);
+  gain.gain.linearRampToValueAtTime(0.0, t2);
+  gain.connect(destination);
+}
+
+module.exports = swell;
+
+},{}],210:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -32682,7 +32779,7 @@ module.exports = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],209:[function(require,module,exports){
+},{}],211:[function(require,module,exports){
 "use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -32750,7 +32847,7 @@ module.exports = connect(function (state) {
   return state;
 })(App);
 
-},{"../components/ExampleSelector":199,"../components/MasterCtrl":200,"../components/SoundSelector":201,"../resources":206,"react":187,"react-redux":40}],210:[function(require,module,exports){
+},{"../components/ExampleSelector":199,"../components/MasterCtrl":200,"../components/SoundSelector":201,"../resources":206,"react":187,"react-redux":40}],212:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -32767,7 +32864,7 @@ var Browser = function () {
     this.actions = actions;
 
     this.onhashchange = this.onhashchange.bind(this);
-    this.window.onhashchange = this.onhashchange;
+    this.window.onhashchange = null;
 
     setTimeout(function () {
       return _this.applyLocationHash();
@@ -32780,7 +32877,9 @@ var Browser = function () {
   }, {
     key: "setState",
     value: function setState(nextState) {
-      this.setLocationHash(nextState);
+      if (this.window.onhashchange) {
+        this.setLocationHash(nextState);
+      }
     }
   }, {
     key: "applyLocationHash",
@@ -32794,6 +32893,8 @@ var Browser = function () {
         this.actions.selectSound(items[0]);
         this.actions.selectExample(items[1] - 1);
       }
+
+      this.window.onhashchange = this.onhashchange;
     }
   }, {
     key: "setLocationHash",
@@ -32826,7 +32927,7 @@ var Browser = function () {
 
 module.exports = Browser;
 
-},{}],211:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -32925,7 +33026,7 @@ function toFunction(code) {
 module.exports = CodeEditor;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../resources":206,"codemirror":2,"codemirror/mode/javascript/javascript":3}],212:[function(require,module,exports){
+},{"../resources":206,"codemirror":2,"codemirror/mode/javascript/javascript":3}],214:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -33006,4 +33107,4 @@ var SoundPreview = function () {
 module.exports = SoundPreview;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../timerAPI":208}]},{},[203]);
+},{"../timerAPI":210}]},{},[203]);
