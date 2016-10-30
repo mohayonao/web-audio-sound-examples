@@ -4,9 +4,21 @@
   <meta charset="utf-8">
   <title>Web Audio Sound Examples</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/codemirror.min.css">
 </head>
 <body>
-  <div id="app"></div>
+  <div class="container">
+    <div class="sidebar">
+      <h1>Web Audio Sound Examples</h1>
+      <div id="app"></div>
+    </div>
+    <div class="contents">
+      <div class="sound"><textarea id="sound"></textarea></div>
+      <div class="example"><textarea id="example"></textarea></div>
+    </div>
+  </div>
+  <div class="label sound-js">sound.js</div>
+  <div class="label example-js">example.js</div>
   <script src="bundle.js"></script>
 </body>
 </html>

@@ -1,0 +1,165 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+
+*:focus {
+  outline: 0;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  font-family: "Arial";
+}
+
+.CodeMirror {
+  height: 100% !important;
+  font-family: "Courier", monospace !important;
+  font-size: 14px !important;
+}
+
+.container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  padding-left: 250px;
+}
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 250px;
+  height: 100%;
+  padding: 2px 8px;
+  color: #ecf0f1;
+  background: #2c3e50;
+}
+
+.sidebar h1 {
+  width: 100%;
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+.sidebar h2 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.sidebar ul {
+  padding: 0 24px;
+  list-style: circle;
+}
+
+.sidebar li {
+  margin: 4px 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.sidebar .selected {
+  color: #1abc9c;
+  list-style: disc;
+}
+
+.sidebar .btn {
+  margin: 4px;
+  width: 45px;
+  height: 24px;
+  font-size: 14px;
+  border: solid 1px #ecf0f1;
+  border-radius: 4px;
+  color: #ecf0f1;
+  background: #95a5a6;
+  cursor: pointer;
+}
+
+.sidebar .btn:active {
+  background: #7f8c8d;
+}
+
+.sidebar .btn-run {
+  background: #1abc9c;
+}
+
+.sidebar .btn-run:active {
+  background: #16a085;
+}
+
+.sidebar .btn-stop {
+  background: #e74c3c;
+}
+
+.sidebar .btn-stop:active {
+  background: #c0392b;
+}
+
+.sidebar .app-container {
+  padding: 4px;
+}
+
+.sidebar .sound-selector {
+  margin: 32px 0;
+}
+
+.sidebar .example-selector {
+  margin: 32px 0;
+}
+
+.contents {
+  position: relative;;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.contents .sound {
+  width: 100%;
+  height: 50%;
+}
+
+.contents .sound .CodeMirror {
+  border-color: #2c3e50;
+  border-style: solid;
+  border-width: 0 0 4px 0;
+}
+
+.contents .example {
+  width: 100%;
+  height: 50%;
+}
+
+.label {
+  position: absolute;;
+  right: 0;
+  width: 80px;
+  padding: 2px;
+  text-align: center;
+  font-size: 12px;
+  color: #ecf0f1;
+  background: #2c3e50;
+}
+
+.sound-js {
+  top: 0;
+}
+
+.example-js {
+  top: 50%;
+}
