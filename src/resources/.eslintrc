@@ -1,0 +1,8 @@
+{
+  "env": {
+    "es6": false
+  },
+  "extends": [
+    "eslint:recommended"
+  ]
+}
