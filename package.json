@@ -1,7 +1,7 @@
 {
   "name": "@mohayonao/web-audio-sound-examples",
   "description": "Web Audio Sound Examples",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "Nao Yonamine <mohayonao@gmail.com>",
   "bugs": {
     "url": "https://github.com/mohayonao/web-audio-sound-examples/issues"
