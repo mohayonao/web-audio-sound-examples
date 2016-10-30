@@ -6,7 +6,7 @@ class Browser {
     this.actions = actions;
 
     this.onhashchange = this.onhashchange.bind(this);
-    this.window.onhashchange = this.onhashchange;
+    this.window.onhashchange = null;
 
     setTimeout(() => this.applyLocationHash(), 0);
   }
@@ -14,7 +14,9 @@ class Browser {
   doAction() {}
 
   setState(nextState) {
-    this.setLocationHash(nextState);
+    if (this.window.onhashchange) {
+      this.setLocationHash(nextState);
+    }
   }
 
   applyLocationHash() {
@@ -27,6 +29,8 @@ class Browser {
       this.actions.selectSound(items[0]);
       this.actions.selectExample(items[1] - 1);
     }
+
+    this.window.onhashchange = this.onhashchange;
   }
 
   setLocationHash(state) {
