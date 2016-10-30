@@ -32528,7 +32528,7 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./actions":198,"./inject":202,"./reducers":204,"./views/App":215,"./views/Browser":216,"./views/CodeEditor":217,"./views/SoundPreview":218,"react":187,"react-dom":37,"react-redux":40,"redux":193}],204:[function(require,module,exports){
+},{"./actions":198,"./inject":202,"./reducers":204,"./views/App":211,"./views/Browser":212,"./views/CodeEditor":213,"./views/SoundPreview":214,"react":187,"react-dom":37,"react-redux":40,"redux":193}],204:[function(require,module,exports){
 "use strict";
 
 var initState = {
@@ -32559,253 +32559,73 @@ module.exports = function () {
 },{}],205:[function(require,module,exports){
 "use strict";
 
-function example01(audioContext, beep) {
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  beep(destination, t0, { frequency: mtof(105), gain: 0.5 });
-}
-
-function example02(audioContext, beep) {
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-  var t1 = t0 + 0.05;
-
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  beep(destination, t0, { frequency: mtof(105), gain: 0.5 });
-  beep(destination, t1, { frequency: mtof(105), gain: 0.25 });
-}
-
-function example03(audioContext, beep) {
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-  var t1 = t0 + 0.1;
-
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  beep(destination, t0, { frequency: mtof(105), gain: 0.5 });
-  beep(destination, t1, { frequency: mtof(117), gain: 0.125 });
-}
-
-module.exports = {
-  name: "beep",
-  sound: require("../sounds/beep"),
-  examples: [example01, example02, example03]
-};
-
-},{"../sounds/beep":210}],206:[function(require,module,exports){
-"use strict";
-
-function example01(audioContext, fmbell) {
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  fmbell(destination, t0, { frequency: mtof(60), duration: 4, gain: 0.25, color: 8 });
-}
-
-function example02(audioContext, fmbell) {
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  fmbell(destination, t0, { frequency: mtof(72), duration: 8, gain: 0.15, color: 4 });
-  fmbell(destination, t0, { frequency: mtof(72), duration: 1, gain: 0.05, color: 13 });
-}
-
-module.exports = {
-  name: "fm-bell",
-  sound: require("../sounds/fm-bell"),
-  examples: [example01, example02]
-};
-
-},{"../sounds/fm-bell":211}],207:[function(require,module,exports){
-"use strict";
-
-function example01(audioContext, hihat) {
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-
-  function whitenoise() {
-    var data = new Float32Array(16384).map(function () {
-      return Math.random() * 2 - 1;
-    });
-    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
-
-    buffer.getChannelData(0).set(data);
-
-    return buffer;
-  }
-
-  var noise = whitenoise();
-
-  hihat(destination, t0, { noise: noise, duration: 0.025, gain: 0.25 });
-}
-
-function example02(audioContext, hihat) {
-  var destination = audioContext.destination;
-
-  function whitenoise() {
-    var data = new Float32Array(16384).map(function () {
-      return Math.random() * 2 - 1;
-    });
-    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
-
-    buffer.getChannelData(0).set(data);
-
-    return buffer;
-  }
-
-  var noise = whitenoise();
-  var counter = 0;
-
-  setInterval(function () {
-    var t0 = audioContext.currentTime;
-    var gain = [0.25, 0.05, 0.125, 0.075][counter];
-
-    hihat(destination, t0, { noise: noise, duration: 0.025, gain: gain });
-
-    counter = (counter + 1) % 4;
-  }, 125);
-}
-
-function example03(audioContext, hihat) {
-  var destination = audioContext.destination;
-
-  function whitenoise() {
-    var data = new Float32Array(16384).map(function () {
-      return Math.random() * 2 - 1;
-    });
-    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
-
-    buffer.getChannelData(0).set(data);
-
-    return buffer;
-  }
-
-  var noise = whitenoise();
-
-  setInterval(function () {
-    var t0 = audioContext.currentTime;
-    var counter = Math.ceil(Math.random() * 4);
-    var duration = 0.125 / counter;
-    var interval = 0.25 / counter;
-
-    for (var i = 0; i < counter; i++) {
-      var t1 = t0 + interval * i;
-      var gain = [0.1, 0.025, 0.15, 0.05][i];
-
-      hihat(destination, t1, { noise: noise, duration: duration, gain: gain });
-    }
-  }, 250);
-}
-
-module.exports = {
-  name: "hihat",
-  sound: require("../sounds/hihat"),
-  examples: [example01, example02, example03]
-};
-
-},{"../sounds/hihat":212}],208:[function(require,module,exports){
-"use strict";
-
-module.exports = {
-  beep: require("./beep"),
-  swell: require("./swell"),
-  hihat: require("./hihat"),
-  "fm-bell": require("./fm-bell")
-};
-
-},{"./beep":205,"./fm-bell":206,"./hihat":207,"./swell":209}],209:[function(require,module,exports){
-"use strict";
-
-function example01(audioContext, swell) {
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  swell(destination, t0, { frequency: mtof(69), duration: 4, gain: 0.25 });
-}
-
-function example02(audioContext, swell) {
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  swell(destination, t0, { frequency: mtof(69), duration: 4, gain: 0.125 });
-  swell(destination, t0, { frequency: mtof(74), duration: 4, gain: 0.125 });
-  swell(destination, t0, { frequency: mtof(79), duration: 4, gain: 0.125 });
-}
-
-function example03(audioContext, swell) {
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-  var t1 = t0 + 4;
-  var t2 = t1 + 2;
-
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  swell(destination, t0, { frequency: mtof(69), duration: 8, gain: 0.125 });
-  swell(destination, t1, { frequency: mtof(79), duration: 6, gain: 0.125 });
-  swell(destination, t2, { frequency: mtof(76), duration: 4, gain: 0.125 });
-}
-
-module.exports = {
-  name: "swell",
-  sound: require("../sounds/swell"),
-  examples: [example01, example02, example03]
-};
-
-},{"../sounds/swell":213}],210:[function(require,module,exports){
-"use strict";
-
 function beep(destination, playbackTime, opts) {
   var t0 = playbackTime;
   var t1 = t0 + 0.025;
   var audioContext = destination.context;
   var oscillator = audioContext.createOscillator();
   var gain = audioContext.createGain();
+  var frequency = opts.frequency;
+  var volume = opts.volume;
 
   oscillator.type = "sine";
-  oscillator.frequency.value = opts.frequency;
+  oscillator.frequency.value = frequency;
   oscillator.start(t0);
   oscillator.stop(t1);
   oscillator.connect(gain);
 
-  gain.gain.value = opts.gain;
+  gain.gain.value = volume;
   gain.connect(destination);
 }
 
-module.exports = beep;
+function example01(audioContext, beep) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
 
-},{}],211:[function(require,module,exports){
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  beep(destination, t0, { frequency: mtof(105), volume: 0.5 });
+}
+
+function example02(audioContext, beep) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+  var t1 = t0 + 0.05;
+
+  beep(destination, t0, { frequency: mtof(105), volume: 0.5 });
+  beep(destination, t1, { frequency: mtof(105), volume: 0.25 });
+}
+
+function example03(audioContext, beep) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+  var t1 = t0 + 0.1;
+
+  beep(destination, t0, { frequency: mtof(105), volume: 0.5 });
+  beep(destination, t1, { frequency: mtof(117), volume: 0.125 });
+}
+
+module.exports = {
+  name: "beep",
+  sound: beep,
+  examples: [example01, example02, example03]
+};
+
+},{}],206:[function(require,module,exports){
 "use strict";
 
 function fmbell(destination, playbackTime, opts) {
-  function FMOperator(audioContext, type) {
+  function operator(audioContext, type) {
     var oscillator = audioContext.createOscillator();
     var gain = audioContext.createGain();
 
@@ -32824,27 +32644,59 @@ function fmbell(destination, playbackTime, opts) {
   var t1 = t0 + opts.duration * 0.5;
   var t2 = t1 + opts.duration * 0.5;
   var audioContext = destination.context;
-  var op1 = new FMOperator(audioContext, "sine");
-  var op2 = new FMOperator(audioContext, "sine");
+  var op1 = operator(audioContext, "sine");
+  var op2 = operator(audioContext, "sine");
+  var frequency = opts.frequency;
+  var volume = opts.volume;
+  var color = opts.color;
 
-  op1.frequency.value = opts.frequency;
-  op1.gain.setValueAtTime(opts.gain, t0);
+  op1.frequency.value = frequency;
+  op1.gain.setValueAtTime(volume, t0);
   op1.gain.linearRampToValueAtTime(0, t2);
   op1.start(t0);
   op1.stop(t2);
   op1.connect(destination);
 
-  op2.frequency.value = opts.frequency * 3.5;
-  op2.gain.setValueAtTime(opts.frequency * opts.color, t0);
-  op2.gain.linearRampToValueAtTime(opts.frequency, t1);
+  op2.frequency.value = frequency * 3.5;
+  op2.gain.setValueAtTime(frequency * color, t0);
+  op2.gain.linearRampToValueAtTime(frequency, t1);
   op2.start(t0);
   op2.stop(t2);
   op2.connect(op1.frequency);
 }
 
-module.exports = fmbell;
+function example01(audioContext, fmbell) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
 
-},{}],212:[function(require,module,exports){
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  fmbell(destination, t0, { frequency: mtof(60), duration: 4, volume: 0.25, color: 8 });
+}
+
+function example02(audioContext, fmbell) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  fmbell(destination, t0, { frequency: mtof(72), duration: 8, volume: 0.15, color: 4 });
+  fmbell(destination, t0, { frequency: mtof(72), duration: 1, volume: 0.05, color: 13 });
+}
+
+module.exports = {
+  name: "fm-bell",
+  sound: fmbell,
+  examples: [example01, example02]
+};
+
+},{}],207:[function(require,module,exports){
+/* global Float32Array */
+
 "use strict";
 
 function hihat(destination, playbackTime, opts) {
@@ -32854,8 +32706,10 @@ function hihat(destination, playbackTime, opts) {
   var bufferSource = audioContext.createBufferSource();
   var biquadFilter = audioContext.createBiquadFilter();
   var gain = audioContext.createGain();
+  var noise = opts.noise;
+  var volume = opts.volume;
 
-  bufferSource.buffer = opts.noise;
+  bufferSource.buffer = noise;
   bufferSource.loop = true;
   bufferSource.start(t0);
   bufferSource.stop(t1);
@@ -32866,14 +32720,103 @@ function hihat(destination, playbackTime, opts) {
   biquadFilter.Q.value = 16;
   biquadFilter.connect(gain);
 
-  gain.gain.setValueAtTime(opts.gain, t0);
+  gain.gain.setValueAtTime(volume, t0);
   gain.gain.exponentialRampToValueAtTime(1e-2, t1);
   gain.connect(destination);
 }
 
-module.exports = hihat;
+function example01(audioContext, hihat) {
+  function whitenoise(audioContext, length) {
+    var data = new Float32Array(length).map(function () {
+      return Math.random() * 2 - 1;
+    });
+    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
 
-},{}],213:[function(require,module,exports){
+    buffer.getChannelData(0).set(data);
+
+    return buffer;
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+  var noise = whitenoise(audioContext, 16384);
+
+  hihat(destination, t0, { noise: noise, duration: 0.025, volume: 0.25 });
+}
+
+function example02(audioContext, hihat) {
+  function whitenoise(audioContext, length) {
+    var data = new Float32Array(length).map(function () {
+      return Math.random() * 2 - 1;
+    });
+    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+
+    buffer.getChannelData(0).set(data);
+
+    return buffer;
+  }
+
+  var destination = audioContext.destination;
+  var noise = whitenoise(audioContext, 16384);
+  var counter = 0;
+
+  setInterval(function () {
+    var t0 = audioContext.currentTime;
+    var volume = [0.25, 0.05, 0.125, 0.075][counter];
+
+    hihat(destination, t0, { noise: noise, duration: 0.025, volume: volume });
+
+    counter = (counter + 1) % 4;
+  }, 125);
+}
+
+function example03(audioContext, hihat) {
+  function whitenoise(audioContext, length) {
+    var data = new Float32Array(length).map(function () {
+      return Math.random() * 2 - 1;
+    });
+    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+
+    buffer.getChannelData(0).set(data);
+
+    return buffer;
+  }
+
+  var destination = audioContext.destination;
+  var noise = whitenoise(audioContext, 16384);
+
+  setInterval(function () {
+    var t0 = audioContext.currentTime;
+    var counter = Math.ceil(Math.random() * 4);
+    var duration = 0.125 / counter;
+    var interval = 0.25 / counter;
+
+    for (var i = 0; i < counter; i++) {
+      var t1 = t0 + interval * i;
+      var volume = [0.1, 0.025, 0.15, 0.05][i];
+
+      hihat(destination, t1, { noise: noise, duration: duration, volume: volume });
+    }
+  }, 250);
+}
+
+module.exports = {
+  name: "hihat",
+  sound: hihat,
+  examples: [example01, example02, example03]
+};
+
+},{}],208:[function(require,module,exports){
+"use strict";
+
+module.exports = {
+  beep: require("./beep"),
+  swell: require("./swell"),
+  hihat: require("./hihat"),
+  "fm-bell": require("./fm-bell")
+};
+
+},{"./beep":205,"./fm-bell":206,"./hihat":207,"./swell":209}],209:[function(require,module,exports){
 "use strict";
 
 function swell(destination, playbackTime, opts) {
@@ -32884,9 +32827,11 @@ function swell(destination, playbackTime, opts) {
   var oscillator1 = audioContext.createOscillator();
   var oscillator2 = audioContext.createOscillator();
   var gain = audioContext.createGain();
+  var frequency = opts.frequency;
+  var volume = opts.volume;
 
   oscillator1.type = "sine";
-  oscillator1.frequency.value = opts.frequency;
+  oscillator1.frequency.value = frequency;
   oscillator1.detune.setValueAtTime(-2, t0);
   oscillator1.detune.linearRampToValueAtTime(-12, t2);
   oscillator1.start(t0);
@@ -32894,7 +32839,7 @@ function swell(destination, playbackTime, opts) {
   oscillator1.connect(gain);
 
   oscillator2.type = "sine";
-  oscillator2.frequency.value = opts.frequency;
+  oscillator2.frequency.value = frequency;
   oscillator2.detune.setValueAtTime(+2, t0);
   oscillator2.detune.linearRampToValueAtTime(+12, t2);
   oscillator2.start(t0);
@@ -32902,14 +32847,57 @@ function swell(destination, playbackTime, opts) {
   oscillator2.connect(gain);
 
   gain.gain.setValueAtTime(0, t0);
-  gain.gain.linearRampToValueAtTime(opts.gain, t1);
+  gain.gain.linearRampToValueAtTime(volume, t1);
   gain.gain.linearRampToValueAtTime(0.0, t2);
   gain.connect(destination);
 }
 
-module.exports = swell;
+function example01(audioContext, swell) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
 
-},{}],214:[function(require,module,exports){
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  swell(destination, t0, { frequency: mtof(69), duration: 4, volume: 0.25 });
+}
+
+function example02(audioContext, swell) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  swell(destination, t0, { frequency: mtof(69), duration: 4, volume: 0.125 });
+  swell(destination, t0, { frequency: mtof(74), duration: 4, volume: 0.125 });
+  swell(destination, t0, { frequency: mtof(79), duration: 4, volume: 0.125 });
+}
+
+function example03(audioContext, swell) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+  var t1 = t0 + 4;
+  var t2 = t1 + 2;
+
+  swell(destination, t0, { frequency: mtof(69), duration: 8, volume: 0.125 });
+  swell(destination, t1, { frequency: mtof(79), duration: 6, volume: 0.125 });
+  swell(destination, t2, { frequency: mtof(76), duration: 4, volume: 0.125 });
+}
+
+module.exports = {
+  name: "swell",
+  sound: swell,
+  examples: [example01, example02, example03]
+};
+
+},{}],210:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -32972,7 +32960,7 @@ module.exports = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],215:[function(require,module,exports){
+},{}],211:[function(require,module,exports){
 "use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -33040,7 +33028,7 @@ module.exports = connect(function (state) {
   return state;
 })(App);
 
-},{"../components/ExampleSelector":199,"../components/MasterCtrl":200,"../components/SoundSelector":201,"../resources":208,"react":187,"react-redux":40}],216:[function(require,module,exports){
+},{"../components/ExampleSelector":199,"../components/MasterCtrl":200,"../components/SoundSelector":201,"../resources":208,"react":187,"react-redux":40}],212:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -33120,7 +33108,7 @@ var Browser = function () {
 
 module.exports = Browser;
 
-},{}],217:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -33219,7 +33207,7 @@ function toFunction(code) {
 module.exports = CodeEditor;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../resources":208,"codemirror":2,"codemirror/mode/javascript/javascript":3}],218:[function(require,module,exports){
+},{"../resources":208,"codemirror":2,"codemirror/mode/javascript/javascript":3}],214:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -33300,4 +33288,4 @@ var SoundPreview = function () {
 module.exports = SoundPreview;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../timerAPI":214}]},{},[203]);
+},{"../timerAPI":210}]},{},[203]);
