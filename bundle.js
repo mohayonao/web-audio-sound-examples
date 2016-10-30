@@ -32528,7 +32528,7 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./actions":198,"./inject":202,"./reducers":204,"./views/App":211,"./views/Browser":212,"./views/CodeEditor":213,"./views/SoundPreview":214,"react":187,"react-dom":37,"react-redux":40,"redux":193}],204:[function(require,module,exports){
+},{"./actions":198,"./inject":202,"./reducers":204,"./views/App":213,"./views/Browser":214,"./views/CodeEditor":215,"./views/SoundPreview":216,"react":187,"react-dom":37,"react-redux":40,"redux":193}],204:[function(require,module,exports){
 "use strict";
 
 var initState = {
@@ -32602,15 +32602,103 @@ module.exports = {
   examples: [example01, example02, example03]
 };
 
-},{"../sounds/beep":208}],206:[function(require,module,exports){
+},{"../sounds/beep":209}],206:[function(require,module,exports){
+"use strict";
+
+function example01(audioContext, hihat) {
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  function whitenoise() {
+    var data = new Float32Array(16384).map(function () {
+      return Math.random() * 2 - 1;
+    });
+    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+
+    buffer.getChannelData(0).set(data);
+
+    return buffer;
+  }
+
+  var noise = whitenoise();
+
+  hihat(destination, t0, { noise: noise, duration: 0.025, gain: 0.25 });
+}
+
+function example02(audioContext, hihat) {
+  var destination = audioContext.destination;
+
+  function whitenoise() {
+    var data = new Float32Array(16384).map(function () {
+      return Math.random() * 2 - 1;
+    });
+    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+
+    buffer.getChannelData(0).set(data);
+
+    return buffer;
+  }
+
+  var noise = whitenoise();
+  var counter = 0;
+
+  setInterval(function () {
+    var t0 = audioContext.currentTime;
+    var gain = [0.25, 0.05, 0.125, 0.075][counter];
+
+    hihat(destination, t0, { noise: noise, duration: 0.025, gain: gain });
+
+    counter = (counter + 1) % 4;
+  }, 125);
+}
+
+function example03(audioContext, hihat) {
+  var destination = audioContext.destination;
+
+  function whitenoise() {
+    var data = new Float32Array(16384).map(function () {
+      return Math.random() * 2 - 1;
+    });
+    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+
+    buffer.getChannelData(0).set(data);
+
+    return buffer;
+  }
+
+  var noise = whitenoise();
+
+  setInterval(function () {
+    var t0 = audioContext.currentTime;
+    var counter = Math.ceil(Math.random() * 4);
+    var duration = 0.125 / counter;
+    var interval = 0.25 / counter;
+
+    for (var i = 0; i < counter; i++) {
+      var t1 = t0 + interval * i;
+      var gain = [0.1, 0.025, 0.15, 0.05][i];
+
+      hihat(destination, t1, { noise: noise, duration: duration, gain: gain });
+    }
+  }, 250);
+}
+
+module.exports = {
+  name: "hihat",
+  sound: require("../sounds/hihat"),
+  examples: [example01, example02, example03]
+};
+
+},{"../sounds/hihat":210}],207:[function(require,module,exports){
 "use strict";
 
 module.exports = {
   beep: require("./beep"),
-  swell: require("./swell")
+  swell: require("./swell"),
+  hihat: require("./hihat")
 };
 
-},{"./beep":205,"./swell":207}],207:[function(require,module,exports){
+},{"./beep":205,"./hihat":206,"./swell":208}],208:[function(require,module,exports){
 "use strict";
 
 function example01(audioContext, swell) {
@@ -32658,7 +32746,7 @@ module.exports = {
   examples: [example01, example02, example03]
 };
 
-},{"../sounds/swell":209}],208:[function(require,module,exports){
+},{"../sounds/swell":211}],209:[function(require,module,exports){
 "use strict";
 
 function beep(destination, playbackTime, opts) {
@@ -32680,7 +32768,36 @@ function beep(destination, playbackTime, opts) {
 
 module.exports = beep;
 
-},{}],209:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
+"use strict";
+
+function hihat(destination, playbackTime, opts) {
+  var t0 = playbackTime;
+  var t1 = t0 + opts.duration;
+  var audioContext = destination.context;
+  var bufferSource = audioContext.createBufferSource();
+  var biquadFilter = audioContext.createBiquadFilter();
+  var gain = audioContext.createGain();
+
+  bufferSource.buffer = opts.noise;
+  bufferSource.loop = true;
+  bufferSource.start(t0);
+  bufferSource.stop(t1);
+  bufferSource.connect(biquadFilter);
+
+  biquadFilter.type = "highpass";
+  biquadFilter.frequency.value = 10000;
+  biquadFilter.Q.value = 16;
+  biquadFilter.connect(gain);
+
+  gain.gain.setValueAtTime(opts.gain, t0);
+  gain.gain.exponentialRampToValueAtTime(1e-2, t1);
+  gain.connect(destination);
+}
+
+module.exports = hihat;
+
+},{}],211:[function(require,module,exports){
 "use strict";
 
 function swell(destination, playbackTime, opts) {
@@ -32716,7 +32833,7 @@ function swell(destination, playbackTime, opts) {
 
 module.exports = swell;
 
-},{}],210:[function(require,module,exports){
+},{}],212:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -32779,7 +32896,7 @@ module.exports = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],211:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 "use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -32847,7 +32964,7 @@ module.exports = connect(function (state) {
   return state;
 })(App);
 
-},{"../components/ExampleSelector":199,"../components/MasterCtrl":200,"../components/SoundSelector":201,"../resources":206,"react":187,"react-redux":40}],212:[function(require,module,exports){
+},{"../components/ExampleSelector":199,"../components/MasterCtrl":200,"../components/SoundSelector":201,"../resources":207,"react":187,"react-redux":40}],214:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -32927,7 +33044,7 @@ var Browser = function () {
 
 module.exports = Browser;
 
-},{}],213:[function(require,module,exports){
+},{}],215:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -33026,7 +33143,7 @@ function toFunction(code) {
 module.exports = CodeEditor;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../resources":206,"codemirror":2,"codemirror/mode/javascript/javascript":3}],214:[function(require,module,exports){
+},{"../resources":207,"codemirror":2,"codemirror/mode/javascript/javascript":3}],216:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -33107,4 +33224,4 @@ var SoundPreview = function () {
 module.exports = SoundPreview;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../timerAPI":210}]},{},[203]);
+},{"../timerAPI":212}]},{},[203]);
