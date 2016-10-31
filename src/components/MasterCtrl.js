@@ -20,6 +20,7 @@ class MasterCtrl extends React.Component {
           <button className={ runClassName } onClick={ ()=> onClick("run") }>Run</button>
           <button className={ stopClassName } onClick={ ()=> onClick("stop") }>Stop</button>
           <button className="btn" onClick={ ()=> onClick("clear") }>Clear</button>
+          <button className="btn" onClick={ ()=> onClick("link") }>Link</button>
         </div>
       </div>
     );

@@ -4,19 +4,24 @@ class Browser {
   constructor(window, actions) {
     this.window = window;
     this.actions = actions;
-
-    this.onhashchange = this.onhashchange.bind(this);
-    this.window.onhashchange = null;
+    this.state = { exampleId: -1 };
 
     setTimeout(() => this.applyLocationHash(), 0);
   }
 
-  doAction() {}
-
-  setState(nextState) {
-    if (this.window.onhashchange) {
-      this.setLocationHash(nextState);
+  doAction(action) {
+    switch (action.type) {
+    case "LINK":
+      return this.link();
     }
+  }
+
+  setState(state) {
+    this.state = state;
+  }
+
+  link() {
+    this.setLocationHash(this.state);
   }
 
   applyLocationHash() {
@@ -29,8 +34,6 @@ class Browser {
       this.actions.selectSoundName(items[0]);
       this.actions.selectExampleId(items[1] - 1);
     }
-
-    this.window.onhashchange = this.onhashchange;
   }
 
   setLocationHash(state) {
@@ -42,13 +45,7 @@ class Browser {
       hash = `${ state.soundName }`;
     }
 
-    this.window.onhashchange = null;
     this.window.location.hash = hash;
-    setTimeout(() => this.window.onhashchange = this.onhashchange, 0);
-  }
-
-  onhashchange() {
-    this.applyLocationHash();
   }
 }
 

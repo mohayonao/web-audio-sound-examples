@@ -10,6 +10,9 @@ module.exports = {
   clear() {
     return { type: "CLEAR" };
   },
+  link() {
+    return { type: "LINK" };
+  },
   execute(soundFn, exampleFn) {
     return { type: "EXECUTE", soundFn, exampleFn };
   },
