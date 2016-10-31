@@ -15,7 +15,7 @@ module.exports = (state = initState, action) => {
   case "EXECUTE":
     return Object.assign({}, state, { preview: true });
   case "SELECT_SOUND_NAME":
-    return Object.assign({}, state, { soundName: action.name, exampleId: -1 });
+    return Object.assign({}, state, { soundName: action.name });
   case "SELECT_EXAMPLE_ID":
     return Object.assign({}, state, { exampleId: action.index });
   }

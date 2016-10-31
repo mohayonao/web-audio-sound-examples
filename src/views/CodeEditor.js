@@ -14,7 +14,8 @@ class CodeEditor {
     this._example = CodeMirror.fromTextArea(document.getElementById("example"), {
       mode: "javascript", lineNumbers: true,
     });
-    this._selected = null;
+    this._soundName = "";
+    this._exampleId = -1;
   }
 
   doAction(action) {
@@ -42,25 +43,27 @@ class CodeEditor {
   }
 
   clear() {
-    this._selected = null;
+    this._soundName = "";
+    this._exampleId = -1;
     this._sound.setValue("");
     this._example.setValue("");
   }
 
   selectSoundName(name) {
-    if (!examples[name]) {
+    this._soundName = name;
+    if (!examples[this._soundName]) {
       return this.clear();
     }
-    this._selected = examples[name];
-    this._sound.setValue(this._selected.sound.toString());
-    this._example.setValue("");
+    this._sound.setValue(examples[this._soundName].sound.toString());
+    this.selectExampleId(this._exampleId);
   }
 
   selectExampleId(index) {
-    if (!this._selected) {
+    this._exampleId = index;
+    if (!examples[this._soundName] || !examples[this._soundName].examples[this._exampleId]) {
       return this._example.setValue("");
     }
-    this._example.setValue((this._selected.examples[index] || "").toString());
+    this._example.setValue(examples[this._soundName].examples[this._exampleId].toString());
   }
 }
 
