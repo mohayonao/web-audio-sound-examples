@@ -2,8 +2,8 @@
 
 function fmbell(destination, playbackTime, opts) {
   function operator(audioContext, type) {
-    var oscillator = audioContext.createOscillator();
-    var gain = audioContext.createGain();
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
 
     oscillator.type = type;
     oscillator.connect(gain);
@@ -16,15 +16,15 @@ function fmbell(destination, playbackTime, opts) {
     return gain;
   }
 
-  var t0 = playbackTime;
-  var t1 = t0 + opts.duration * 0.5;
-  var t2 = t1 + opts.duration * 0.5;
-  var audioContext = destination.context;
-  var op1 = operator(audioContext, "sine");
-  var op2 = operator(audioContext, "sine");
-  var frequency = opts.frequency;
-  var volume = opts.volume;
-  var color = opts.color;
+  const t0 = playbackTime;
+  const t1 = t0 + opts.duration * 0.5;
+  const t2 = t1 + opts.duration * 0.5;
+  const audioContext = destination.context;
+  const op1 = operator(audioContext, "sine");
+  const op2 = operator(audioContext, "sine");
+  const frequency = opts.frequency;
+  const volume = opts.volume;
+  const color = opts.color;
 
   op1.frequency.value = frequency;
   op1.gain.setValueAtTime(volume, t0);
@@ -46,8 +46,8 @@ function example01(audioContext, fmbell) {
     return 440 * Math.pow(2, (midi - 69) / 12);
   }
 
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
+  const destination = audioContext.destination;
+  const t0 = audioContext.currentTime;
 
   fmbell(destination, t0, { frequency: mtof(60), duration: 4, volume: 0.25, color: 8 });
 }
@@ -57,8 +57,8 @@ function example02(audioContext, fmbell) {
     return 440 * Math.pow(2, (midi - 69) / 12);
   }
 
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
+  const destination = audioContext.destination;
+  const t0 = audioContext.currentTime;
 
   fmbell(destination, t0, { frequency: mtof(72), duration: 8, volume: 0.15, color: 4 });
   fmbell(destination, t0, { frequency: mtof(72), duration: 1, volume: 0.05, color: 13 });
