@@ -2,8 +2,8 @@
 
 function swell(destination, playbackTime, opts) {
   const t0 = playbackTime;
-  const t1 = t0 + opts.duration * 0.3;
-  const t2 = t1 + opts.duration * 0.7;
+  const t1 = t0 + opts.attackTime;
+  const t2 = t1 + opts.decayTime;
   const audioContext = destination.context;
   const oscillator1 = audioContext.createOscillator();
   const oscillator2 = audioContext.createOscillator();

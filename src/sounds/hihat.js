@@ -8,6 +8,7 @@ function hihat(destination, playbackTime, opts) {
   const biquadFilter = audioContext.createBiquadFilter();
   const gain = audioContext.createGain();
   const noise = opts.noise;
+  const cutoff = opts.cutoff;
   const volume = opts.volume;
 
   bufferSource.buffer = noise;
@@ -17,7 +18,7 @@ function hihat(destination, playbackTime, opts) {
   bufferSource.connect(biquadFilter);
 
   biquadFilter.type = "highpass";
-  biquadFilter.frequency.value = 10000;
+  biquadFilter.frequency.value = cutoff;
   biquadFilter.Q.value = 16;
   biquadFilter.connect(gain);
 

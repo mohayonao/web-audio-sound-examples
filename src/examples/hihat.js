@@ -14,7 +14,7 @@ function example01(audioContext, hihat) {
   const t0 = audioContext.currentTime;
   const noise = whitenoise(audioContext, 16384);
 
-  hihat(destination, t0, { noise: noise, duration: 0.025, volume: 0.25 });
+  hihat(destination, t0, { noise: noise, duration: 0.025, cutoff: 10000, volume: 0.25 });
 }
 
 function example02(audioContext, hihat) {
@@ -34,9 +34,10 @@ function example02(audioContext, hihat) {
     const interval = 0.125;
     const t0 = audioContext.currentTime;
     const duration = 0.025;
+    const cutoff = 8000;
     const volume = [ 0.25, 0.05, 0.125, 0.075 ][counter % 4];
 
-    hihat(destination, t0, { noise, duration, volume });
+    hihat(destination, t0, { noise, duration, cutoff, volume });
 
     setTimeout(() => loop(counter + 1), interval * 1000);
   }
@@ -56,6 +57,7 @@ function example03(audioContext, hihat) {
 
   const destination = audioContext.destination;
   const noise = whitenoise(audioContext, 16384);
+  const cutoff = 12000;
 
   function loop() {
     const interval = 0.25;
@@ -67,7 +69,7 @@ function example03(audioContext, hihat) {
       const t1 = t0 + (interval / counter) * i;
       const volume = [ 0.1, 0.025, 0.15, 0.05 ][i];
 
-      hihat(destination, t1, { noise, duration, volume });
+      hihat(destination, t1, { noise, duration, cutoff, volume });
     }
 
     setTimeout(() => loop(), interval * 1000);

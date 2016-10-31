@@ -20,8 +20,8 @@ function example02(audioContext, beep) {
   const t0 = audioContext.currentTime;
   const t1 = t0 + 0.05;
 
-  beep(destination, t0, { frequency: mtof(105), volume: 0.5 });
-  beep(destination, t1, { frequency: mtof(105), volume: 0.25 });
+  beep(destination, t0, { frequency: mtof(100), volume: 0.5 });
+  beep(destination, t1, { frequency: mtof(100), volume: 0.25 });
 }
 
 function example03(audioContext, beep) {
@@ -33,8 +33,8 @@ function example03(audioContext, beep) {
   const t0 = audioContext.currentTime;
   const t1 = t0 + 0.1;
 
-  beep(destination, t0, { frequency: mtof(105), volume: 0.5 });
-  beep(destination, t1, { frequency: mtof(117), volume: 0.125 });
+  beep(destination, t0, { frequency: mtof(96), volume: 0.5 });
+  beep(destination, t1, { frequency: mtof(108), volume: 0.125 });
 }
 
 module.exports = {
