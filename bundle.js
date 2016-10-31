@@ -32695,8 +32695,6 @@ module.exports = {
 };
 
 },{}],207:[function(require,module,exports){
-/* global Float32Array */
-
 "use strict";
 
 function hihat(destination, playbackTime, opts) {
@@ -32758,16 +32756,21 @@ function example02(audioContext, hihat) {
 
   var destination = audioContext.destination;
   var noise = whitenoise(audioContext, 16384);
-  var counter = 0;
 
-  setInterval(function () {
+  function loop(counter) {
+    var interval = 0.125;
     var t0 = audioContext.currentTime;
-    var volume = [0.25, 0.05, 0.125, 0.075][counter];
+    var duration = 0.025;
+    var volume = [0.25, 0.05, 0.125, 0.075][counter % 4];
 
-    hihat(destination, t0, { noise: noise, duration: 0.025, volume: volume });
+    hihat(destination, t0, { noise: noise, duration: duration, volume: volume });
 
-    counter = (counter + 1) % 4;
-  }, 125);
+    setTimeout(function () {
+      return loop(counter + 1);
+    }, interval * 1000);
+  }
+
+  loop(0);
 }
 
 function example03(audioContext, hihat) {
@@ -32785,19 +32788,25 @@ function example03(audioContext, hihat) {
   var destination = audioContext.destination;
   var noise = whitenoise(audioContext, 16384);
 
-  setInterval(function () {
+  function loop() {
+    var interval = 0.25;
     var t0 = audioContext.currentTime;
     var counter = Math.ceil(Math.random() * 4);
     var duration = 0.125 / counter;
-    var interval = 0.25 / counter;
 
     for (var i = 0; i < counter; i++) {
-      var t1 = t0 + interval * i;
+      var t1 = t0 + interval / counter * i;
       var volume = [0.1, 0.025, 0.15, 0.05][i];
 
       hihat(destination, t1, { noise: noise, duration: duration, volume: volume });
     }
-  }, 250);
+
+    setTimeout(function () {
+      return loop();
+    }, interval * 1000);
+  }
+
+  loop();
 }
 
 module.exports = {
