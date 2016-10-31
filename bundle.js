@@ -32196,14 +32196,17 @@ module.exports = {
   clear: function clear() {
     return { type: "CLEAR" };
   },
-  execute: function execute(sound, example) {
-    return { type: "EXECUTE", sound: sound, example: example };
+  link: function link() {
+    return { type: "LINK" };
   },
-  selectSound: function selectSound(sound) {
-    return { type: "SELECT_SOUND", sound: sound };
+  execute: function execute(soundFn, exampleFn) {
+    return { type: "EXECUTE", soundFn: soundFn, exampleFn: exampleFn };
   },
-  selectExample: function selectExample(index) {
-    return { type: "SELECT_EXAMPLE", index: index };
+  selectSoundName: function selectSoundName(name) {
+    return { type: "SELECT_SOUND_NAME", name: name };
+  },
+  selectExampleId: function selectExampleId(index) {
+    return { type: "SELECT_EXAMPLE_ID", index: index };
   }
 };
 
@@ -32233,25 +32236,25 @@ var ExampleSelector = function (_React$Component) {
   _createClass(ExampleSelector, [{
     key: "shouldComponentUpdate",
     value: function shouldComponentUpdate(nextProps) {
-      return this.props.sound !== nextProps.sound || this.props.example !== nextProps.example;
+      return this.props.soundName !== nextProps.soundName || this.props.exampleId !== nextProps.exampleId;
     }
   }, {
     key: "render",
     value: function render() {
       var _props = this.props,
-          resources = _props.resources,
-          sound = _props.sound,
-          example = _props.example,
+          examples = _props.examples,
+          soundName = _props.soundName,
+          exampleId = _props.exampleId,
           onChange = _props.onChange;
 
-      var selected = resources[sound];
+      var selected = examples[soundName];
 
       if (!selected) {
         return null;
       }
 
       var elems = selected.examples.map(function (fn, i) {
-        var className = classNames({ selected: i === example });
+        var className = classNames({ selected: i === exampleId });
         var onClick = function onClick() {
           return onChange(i);
         };
@@ -32284,9 +32287,9 @@ var ExampleSelector = function (_React$Component) {
 }(React.Component);
 
 ExampleSelector.propTypes = {
-  resources: React.PropTypes.object.isRequired,
-  sound: React.PropTypes.string.isRequired,
-  example: React.PropTypes.number.isRequired,
+  examples: React.PropTypes.object.isRequired,
+  soundName: React.PropTypes.string.isRequired,
+  exampleId: React.PropTypes.number.isRequired,
   onChange: React.PropTypes.func.isRequired
 };
 
@@ -32318,17 +32321,15 @@ var MasterCtrl = function (_React$Component) {
   _createClass(MasterCtrl, [{
     key: "shouldComponentUpdate",
     value: function shouldComponentUpdate(nextProps) {
-      return this.props.preview !== nextProps.preview || this.props.example !== nextProps.example;
+      return this.props.preview !== nextProps.preview;
     }
   }, {
     key: "render",
     value: function render() {
       var _props = this.props,
           preview = _props.preview,
-          example = _props.example,
           _onClick = _props.onClick;
 
-      var runClassName = classNames("btn", { "btn-run": example !== -1 });
       var stopClassName = classNames("btn", { "btn-stop": preview });
 
       return React.createElement(
@@ -32344,7 +32345,7 @@ var MasterCtrl = function (_React$Component) {
           null,
           React.createElement(
             "button",
-            { className: runClassName, onClick: function onClick() {
+            { className: "btn btn-run", onClick: function onClick() {
                 return _onClick("run");
               } },
             "Run"
@@ -32362,6 +32363,13 @@ var MasterCtrl = function (_React$Component) {
                 return _onClick("clear");
               } },
             "Clear"
+          ),
+          React.createElement(
+            "button",
+            { className: "btn", onClick: function onClick() {
+                return _onClick("link");
+              } },
+            "Link"
           )
         )
       );
@@ -32373,7 +32381,6 @@ var MasterCtrl = function (_React$Component) {
 
 MasterCtrl.propTypes = {
   preview: React.PropTypes.bool.isRequired,
-  example: React.PropTypes.number.isRequired,
   onClick: React.PropTypes.func.isRequired
 };
 
@@ -32405,18 +32412,18 @@ var SoundSelector = function (_React$Component) {
   _createClass(SoundSelector, [{
     key: "shouldComponentUpdate",
     value: function shouldComponentUpdate(nextProps) {
-      return this.props.sound !== nextProps.sound;
+      return this.props.soundName !== nextProps.soundName;
     }
   }, {
     key: "render",
     value: function render() {
       var _props = this.props,
-          resources = _props.resources,
-          sound = _props.sound,
+          examples = _props.examples,
+          soundName = _props.soundName,
           onChange = _props.onChange;
 
-      var elems = Object.keys(resources).map(function (name, i) {
-        var className = classNames({ selected: name === sound });
+      var elems = Object.keys(examples).map(function (name, i) {
+        var className = classNames({ selected: name === soundName });
         var onClick = function onClick() {
           return onChange(name);
         };
@@ -32449,14 +32456,280 @@ var SoundSelector = function (_React$Component) {
 }(React.Component);
 
 SoundSelector.propTypes = {
-  resources: React.PropTypes.object.isRequired,
-  sound: React.PropTypes.string.isRequired,
+  examples: React.PropTypes.object.isRequired,
+  soundName: React.PropTypes.string.isRequired,
   onChange: React.PropTypes.func.isRequired
 };
 
 module.exports = SoundSelector;
 
 },{"classnames":1,"react":187}],202:[function(require,module,exports){
+"use strict";
+
+function example01(audioContext, beep) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  beep(destination, t0, { frequency: mtof(105), volume: 0.5 });
+}
+
+function example02(audioContext, beep) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+  var t1 = t0 + 0.05;
+
+  beep(destination, t0, { frequency: mtof(100), volume: 0.5 });
+  beep(destination, t1, { frequency: mtof(100), volume: 0.25 });
+}
+
+function example03(audioContext, beep) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+  var t1 = t0 + 0.1;
+
+  beep(destination, t0, { frequency: mtof(96), volume: 0.5 });
+  beep(destination, t1, { frequency: mtof(108), volume: 0.125 });
+}
+
+module.exports = {
+  name: "beep",
+  sound: require("../sounds/beep"),
+  examples: [example01, example02, example03]
+};
+
+},{"../sounds/beep":211}],203:[function(require,module,exports){
+"use strict";
+
+function example01(audioContext, coin) {
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  coin(destination, t0);
+}
+
+function example02(audioContext, coin) {
+  var destination = audioContext.destination;
+
+  function loop() {
+    var t0 = audioContext.currentTime;
+
+    coin(destination, t0, { volume: 0.125 });
+
+    setTimeout(function () {
+      return loop();
+    }, 500);
+  }
+
+  loop();
+}
+
+module.exports = {
+  name: "coin",
+  sound: require("../sounds/coin"),
+  examples: [example01, example02]
+};
+
+},{"../sounds/coin":212}],204:[function(require,module,exports){
+"use strict";
+
+function example01(audioContext, fmbell) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  fmbell(destination, t0, { frequency: mtof(60), duration: 4, volume: 0.25, color: 8 });
+}
+
+function example02(audioContext, fmbell) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  fmbell(destination, t0, { frequency: mtof(72), duration: 8, volume: 0.15, color: 4 });
+  fmbell(destination, t0, { frequency: mtof(72), duration: 1, volume: 0.05, color: 13 });
+}
+
+module.exports = {
+  name: "fm-bell",
+  sound: require("../sounds/fm-bell"),
+  examples: [example01, example02]
+};
+
+},{"../sounds/fm-bell":213}],205:[function(require,module,exports){
+"use strict";
+
+function example01(audioContext, hihat) {
+  function whitenoise(audioContext, length) {
+    var data = new Float32Array(length).map(function () {
+      return Math.random() * 2 - 1;
+    });
+    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+
+    buffer.getChannelData(0).set(data);
+
+    return buffer;
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+  var noise = whitenoise(audioContext, 16384);
+
+  hihat(destination, t0, { noise: noise, duration: 0.025, cutoff: 10000, volume: 0.25 });
+}
+
+function example02(audioContext, hihat) {
+  function whitenoise(audioContext, length) {
+    var data = new Float32Array(length).map(function () {
+      return Math.random() * 2 - 1;
+    });
+    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+
+    buffer.getChannelData(0).set(data);
+
+    return buffer;
+  }
+
+  var destination = audioContext.destination;
+  var noise = whitenoise(audioContext, 16384);
+
+  function loop(counter) {
+    var interval = 0.125;
+    var t0 = audioContext.currentTime;
+    var duration = 0.025;
+    var cutoff = 8000;
+    var volume = [0.25, 0.05, 0.125, 0.075][counter % 4];
+
+    hihat(destination, t0, { noise: noise, duration: duration, cutoff: cutoff, volume: volume });
+
+    setTimeout(function () {
+      return loop(counter + 1);
+    }, interval * 1000);
+  }
+
+  loop(0);
+}
+
+function example03(audioContext, hihat) {
+  function whitenoise(audioContext, length) {
+    var data = new Float32Array(length).map(function () {
+      return Math.random() * 2 - 1;
+    });
+    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+
+    buffer.getChannelData(0).set(data);
+
+    return buffer;
+  }
+
+  var destination = audioContext.destination;
+  var noise = whitenoise(audioContext, 16384);
+  var cutoff = 12000;
+
+  function loop() {
+    var interval = 0.25;
+    var t0 = audioContext.currentTime;
+    var counter = Math.ceil(Math.random() * 4);
+    var duration = 0.125 / counter;
+
+    for (var i = 0; i < counter; i++) {
+      var t1 = t0 + interval / counter * i;
+      var volume = [0.1, 0.025, 0.15, 0.05][i];
+
+      hihat(destination, t1, { noise: noise, duration: duration, cutoff: cutoff, volume: volume });
+    }
+
+    setTimeout(function () {
+      return loop();
+    }, interval * 1000);
+  }
+
+  loop();
+}
+
+module.exports = {
+  name: "hihat",
+  sound: require("../sounds/hihat"),
+  examples: [example01, example02, example03]
+};
+
+},{"../sounds/hihat":214}],206:[function(require,module,exports){
+"use strict";
+
+module.exports = {
+  beep: require("./beep"),
+  coin: require("./coin"),
+  swell: require("./swell"),
+  hihat: require("./hihat"),
+  "fm-bell": require("./fm-bell")
+};
+
+},{"./beep":202,"./coin":203,"./fm-bell":204,"./hihat":205,"./swell":207}],207:[function(require,module,exports){
+"use strict";
+
+function example01(audioContext, swell) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  swell(destination, t0, { frequency: mtof(69), attackTime: 2, decayTime: 4, volume: 0.25 });
+}
+
+function example02(audioContext, swell) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+
+  swell(destination, t0, { frequency: mtof(69), attackTime: 6, decayTime: 2, volume: 0.125 });
+  swell(destination, t0, { frequency: mtof(74), attackTime: 6, decayTime: 2, volume: 0.125 });
+  swell(destination, t0, { frequency: mtof(79), attackTime: 6, decayTime: 2, volume: 0.125 });
+}
+
+function example03(audioContext, swell) {
+  function mtof(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  var destination = audioContext.destination;
+  var t0 = audioContext.currentTime;
+  var t1 = t0 + 4;
+  var t2 = t1 + 2;
+
+  swell(destination, t0, { frequency: mtof(69), attackTime: 4, decayTime: 4, volume: 0.125 });
+  swell(destination, t1, { frequency: mtof(79), attackTime: 2, decayTime: 4, volume: 0.125 });
+  swell(destination, t2, { frequency: mtof(76), attackTime: 2, decayTime: 2, volume: 0.125 });
+}
+
+module.exports = {
+  name: "swell",
+  sound: require("../sounds/swell"),
+  examples: [example01, example02, example03]
+};
+
+},{"../sounds/swell":215}],208:[function(require,module,exports){
 "use strict";
 
 module.exports = function (func) {
@@ -32469,7 +32742,7 @@ module.exports = function (func) {
   };
 };
 
-},{}],203:[function(require,module,exports){
+},{}],209:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -32528,13 +32801,13 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./actions":198,"./inject":202,"./reducers":204,"./views/App":211,"./views/Browser":212,"./views/CodeEditor":213,"./views/SoundPreview":214,"react":187,"react-dom":37,"react-redux":40,"redux":193}],204:[function(require,module,exports){
+},{"./actions":198,"./inject":208,"./reducers":210,"./views/App":217,"./views/Browser":218,"./views/CodeEditor":219,"./views/SoundPreview":220,"react":187,"react-dom":37,"react-redux":40,"redux":193}],210:[function(require,module,exports){
 "use strict";
 
 var initState = {
   preview: false,
-  sound: "",
-  example: -1
+  soundName: "",
+  exampleId: -1
 };
 
 module.exports = function () {
@@ -32545,18 +32818,18 @@ module.exports = function () {
     case "STOP":
       return Object.assign({}, state, { preview: false });
     case "CLEAR":
-      return Object.assign({}, state, { sound: "", example: -1, preview: false });
+      return Object.assign({}, state, { soundName: "", exampleId: -1, preview: false });
     case "EXECUTE":
       return Object.assign({}, state, { preview: true });
-    case "SELECT_SOUND":
-      return Object.assign({}, state, { sound: action.sound, example: -1 });
-    case "SELECT_EXAMPLE":
-      return Object.assign({}, state, { example: action.index });
+    case "SELECT_SOUND_NAME":
+      return Object.assign({}, state, { soundName: action.name });
+    case "SELECT_EXAMPLE_ID":
+      return Object.assign({}, state, { exampleId: action.index });
   }
   return state;
 };
 
-},{}],205:[function(require,module,exports){
+},{}],211:[function(require,module,exports){
 "use strict";
 
 function beep(destination, playbackTime, opts) {
@@ -32578,50 +32851,37 @@ function beep(destination, playbackTime, opts) {
   gain.connect(destination);
 }
 
-function example01(audioContext, beep) {
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
+module.exports = beep;
 
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
+},{}],212:[function(require,module,exports){
+"use strict";
 
-  beep(destination, t0, { frequency: mtof(105), volume: 0.5 });
+function coin(destination, playbackTime, opts) {
+  opts = opts || {};
+  var t0 = playbackTime;
+  var t1 = t0 + 0.075;
+  var t2 = t1 + 0.825;
+  var audioContext = destination.context;
+  var oscillator = audioContext.createOscillator();
+  var gain = audioContext.createGain();
+  var volume = opts.volume || 0.25;
+
+  oscillator.type = "square";
+  oscillator.frequency.setValueAtTime(987.7666025122483, t0);
+  oscillator.frequency.setValueAtTime(1318.5102276514797, t1);
+  oscillator.start(t0);
+  oscillator.stop(t2);
+  oscillator.connect(gain);
+
+  gain.gain.setValueAtTime(volume, t0);
+  gain.gain.setValueAtTime(volume, t1);
+  gain.gain.linearRampToValueAtTime(0, t2);
+  gain.connect(destination);
 }
 
-function example02(audioContext, beep) {
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
+module.exports = coin;
 
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-  var t1 = t0 + 0.05;
-
-  beep(destination, t0, { frequency: mtof(105), volume: 0.5 });
-  beep(destination, t1, { frequency: mtof(105), volume: 0.25 });
-}
-
-function example03(audioContext, beep) {
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-  var t1 = t0 + 0.1;
-
-  beep(destination, t0, { frequency: mtof(105), volume: 0.5 });
-  beep(destination, t1, { frequency: mtof(117), volume: 0.125 });
-}
-
-module.exports = {
-  name: "beep",
-  sound: beep,
-  examples: [example01, example02, example03]
-};
-
-},{}],206:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 "use strict";
 
 function fmbell(destination, playbackTime, opts) {
@@ -32665,36 +32925,9 @@ function fmbell(destination, playbackTime, opts) {
   op2.connect(op1.frequency);
 }
 
-function example01(audioContext, fmbell) {
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
+module.exports = fmbell;
 
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-
-  fmbell(destination, t0, { frequency: mtof(60), duration: 4, volume: 0.25, color: 8 });
-}
-
-function example02(audioContext, fmbell) {
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-
-  fmbell(destination, t0, { frequency: mtof(72), duration: 8, volume: 0.15, color: 4 });
-  fmbell(destination, t0, { frequency: mtof(72), duration: 1, volume: 0.05, color: 13 });
-}
-
-module.exports = {
-  name: "fm-bell",
-  sound: fmbell,
-  examples: [example01, example02]
-};
-
-},{}],207:[function(require,module,exports){
+},{}],214:[function(require,module,exports){
 "use strict";
 
 function hihat(destination, playbackTime, opts) {
@@ -32705,6 +32938,7 @@ function hihat(destination, playbackTime, opts) {
   var biquadFilter = audioContext.createBiquadFilter();
   var gain = audioContext.createGain();
   var noise = opts.noise;
+  var cutoff = opts.cutoff;
   var volume = opts.volume;
 
   bufferSource.buffer = noise;
@@ -32714,7 +32948,7 @@ function hihat(destination, playbackTime, opts) {
   bufferSource.connect(biquadFilter);
 
   biquadFilter.type = "highpass";
-  biquadFilter.frequency.value = 10000;
+  biquadFilter.frequency.value = cutoff;
   biquadFilter.Q.value = 16;
   biquadFilter.connect(gain);
 
@@ -32723,115 +32957,15 @@ function hihat(destination, playbackTime, opts) {
   gain.connect(destination);
 }
 
-function example01(audioContext, hihat) {
-  function whitenoise(audioContext, length) {
-    var data = new Float32Array(length).map(function () {
-      return Math.random() * 2 - 1;
-    });
-    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
+module.exports = hihat;
 
-    buffer.getChannelData(0).set(data);
-
-    return buffer;
-  }
-
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-  var noise = whitenoise(audioContext, 16384);
-
-  hihat(destination, t0, { noise: noise, duration: 0.025, volume: 0.25 });
-}
-
-function example02(audioContext, hihat) {
-  function whitenoise(audioContext, length) {
-    var data = new Float32Array(length).map(function () {
-      return Math.random() * 2 - 1;
-    });
-    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
-
-    buffer.getChannelData(0).set(data);
-
-    return buffer;
-  }
-
-  var destination = audioContext.destination;
-  var noise = whitenoise(audioContext, 16384);
-
-  function loop(counter) {
-    var interval = 0.125;
-    var t0 = audioContext.currentTime;
-    var duration = 0.025;
-    var volume = [0.25, 0.05, 0.125, 0.075][counter % 4];
-
-    hihat(destination, t0, { noise: noise, duration: duration, volume: volume });
-
-    setTimeout(function () {
-      return loop(counter + 1);
-    }, interval * 1000);
-  }
-
-  loop(0);
-}
-
-function example03(audioContext, hihat) {
-  function whitenoise(audioContext, length) {
-    var data = new Float32Array(length).map(function () {
-      return Math.random() * 2 - 1;
-    });
-    var buffer = audioContext.createBuffer(1, data.length, audioContext.sampleRate);
-
-    buffer.getChannelData(0).set(data);
-
-    return buffer;
-  }
-
-  var destination = audioContext.destination;
-  var noise = whitenoise(audioContext, 16384);
-
-  function loop() {
-    var interval = 0.25;
-    var t0 = audioContext.currentTime;
-    var counter = Math.ceil(Math.random() * 4);
-    var duration = 0.125 / counter;
-
-    for (var i = 0; i < counter; i++) {
-      var t1 = t0 + interval / counter * i;
-      var volume = [0.1, 0.025, 0.15, 0.05][i];
-
-      hihat(destination, t1, { noise: noise, duration: duration, volume: volume });
-    }
-
-    setTimeout(function () {
-      return loop();
-    }, interval * 1000);
-  }
-
-  loop();
-}
-
-module.exports = {
-  name: "hihat",
-  sound: hihat,
-  examples: [example01, example02, example03]
-};
-
-},{}],208:[function(require,module,exports){
-"use strict";
-
-module.exports = {
-  beep: require("./beep"),
-  swell: require("./swell"),
-  hihat: require("./hihat"),
-  "fm-bell": require("./fm-bell")
-};
-
-},{"./beep":205,"./fm-bell":206,"./hihat":207,"./swell":209}],209:[function(require,module,exports){
+},{}],215:[function(require,module,exports){
 "use strict";
 
 function swell(destination, playbackTime, opts) {
   var t0 = playbackTime;
-  var t1 = t0 + opts.duration * 0.3;
-  var t2 = t1 + opts.duration * 0.7;
+  var t1 = t0 + opts.attackTime;
+  var t2 = t1 + opts.decayTime;
   var audioContext = destination.context;
   var oscillator1 = audioContext.createOscillator();
   var oscillator2 = audioContext.createOscillator();
@@ -32861,52 +32995,9 @@ function swell(destination, playbackTime, opts) {
   gain.connect(destination);
 }
 
-function example01(audioContext, swell) {
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
+module.exports = swell;
 
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-
-  swell(destination, t0, { frequency: mtof(69), duration: 4, volume: 0.25 });
-}
-
-function example02(audioContext, swell) {
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-
-  swell(destination, t0, { frequency: mtof(69), duration: 4, volume: 0.125 });
-  swell(destination, t0, { frequency: mtof(74), duration: 4, volume: 0.125 });
-  swell(destination, t0, { frequency: mtof(79), duration: 4, volume: 0.125 });
-}
-
-function example03(audioContext, swell) {
-  function mtof(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-  }
-
-  var destination = audioContext.destination;
-  var t0 = audioContext.currentTime;
-  var t1 = t0 + 4;
-  var t2 = t1 + 2;
-
-  swell(destination, t0, { frequency: mtof(69), duration: 8, volume: 0.125 });
-  swell(destination, t1, { frequency: mtof(79), duration: 6, volume: 0.125 });
-  swell(destination, t2, { frequency: mtof(76), duration: 4, volume: 0.125 });
-}
-
-module.exports = {
-  name: "swell",
-  sound: swell,
-  examples: [example01, example02, example03]
-};
-
-},{}],210:[function(require,module,exports){
+},{}],216:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -32969,7 +33060,7 @@ module.exports = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],211:[function(require,module,exports){
+},{}],217:[function(require,module,exports){
 "use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -32987,7 +33078,7 @@ var React = require("react");
 var _require = require("react-redux"),
     connect = _require.connect;
 
-var resources = require("../resources");
+var examples = require("../examples");
 var MasterCtrl = require("../components/MasterCtrl");
 var SoundSelector = require("../components/SoundSelector");
 var ExampleSelector = require("../components/ExampleSelector");
@@ -33006,11 +33097,11 @@ var App = function (_React$Component) {
     value: function render() {
       var actions = this.props.actions;
 
-      var selectSound = function selectSound(name) {
-        return actions.selectSound(name);
+      var selectSoundName = function selectSoundName(name) {
+        return actions.selectSoundName(name);
       };
-      var selectExample = function selectExample(index) {
-        return actions.selectExample(index);
+      var selectExampleId = function selectExampleId(index) {
+        return actions.selectExampleId(index);
       };
       var onClick = function onClick(actionName) {
         return actions[actionName]();
@@ -33020,8 +33111,8 @@ var App = function (_React$Component) {
         "div",
         { className: "app-container" },
         React.createElement(MasterCtrl, _extends({}, this.props, { onClick: onClick })),
-        React.createElement(SoundSelector, _extends({}, this.props, { resources: resources, onChange: selectSound })),
-        React.createElement(ExampleSelector, _extends({}, this.props, { resources: resources, onChange: selectExample }))
+        React.createElement(SoundSelector, _extends({}, this.props, { examples: examples, onChange: selectSoundName })),
+        React.createElement(ExampleSelector, _extends({}, this.props, { examples: examples, onChange: selectExampleId }))
       );
     }
   }]);
@@ -33037,7 +33128,7 @@ module.exports = connect(function (state) {
   return state;
 })(App);
 
-},{"../components/ExampleSelector":199,"../components/MasterCtrl":200,"../components/SoundSelector":201,"../resources":208,"react":187,"react-redux":40}],212:[function(require,module,exports){
+},{"../components/ExampleSelector":199,"../components/MasterCtrl":200,"../components/SoundSelector":201,"../examples":206,"react":187,"react-redux":40}],218:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -33052,9 +33143,7 @@ var Browser = function () {
 
     this.window = window;
     this.actions = actions;
-
-    this.onhashchange = this.onhashchange.bind(this);
-    this.window.onhashchange = null;
+    this.state = { exampleId: -1 };
 
     setTimeout(function () {
       return _this.applyLocationHash();
@@ -33063,13 +33152,21 @@ var Browser = function () {
 
   _createClass(Browser, [{
     key: "doAction",
-    value: function doAction() {}
+    value: function doAction(action) {
+      switch (action.type) {
+        case "LINK":
+          return this.link();
+      }
+    }
   }, {
     key: "setState",
-    value: function setState(nextState) {
-      if (this.window.onhashchange) {
-        this.setLocationHash(nextState);
-      }
+    value: function setState(state) {
+      this.state = state;
+    }
+  }, {
+    key: "link",
+    value: function link() {
+      this.setLocationHash(this.state);
     }
   }, {
     key: "applyLocationHash",
@@ -33077,38 +33174,25 @@ var Browser = function () {
       var items = this.window.location.hash.slice(1).split("/");
 
       if (items.length === 1) {
-        this.actions.selectSound(items[0]);
+        this.actions.selectSoundName(items[0]);
       }
       if (items.length === 2) {
-        this.actions.selectSound(items[0]);
-        this.actions.selectExample(items[1] - 1);
+        this.actions.selectSoundName(items[0]);
+        this.actions.selectExampleId(items[1] - 1);
       }
-
-      this.window.onhashchange = this.onhashchange;
     }
   }, {
     key: "setLocationHash",
     value: function setLocationHash(state) {
-      var _this2 = this;
-
       var hash = "";
 
-      if (state.example !== -1) {
-        hash = state.sound + "/" + (state.example + 1);
+      if (state.exampleId !== -1) {
+        hash = state.soundName + "/" + (state.exampleId + 1);
       } else {
-        hash = "" + state.sound;
+        hash = "" + state.soundName;
       }
 
-      this.window.onhashchange = null;
       this.window.location.hash = hash;
-      setTimeout(function () {
-        return _this2.window.onhashchange = _this2.onhashchange;
-      }, 0);
-    }
-  }, {
-    key: "onhashchange",
-    value: function onhashchange() {
-      this.applyLocationHash();
     }
   }]);
 
@@ -33117,7 +33201,7 @@ var Browser = function () {
 
 module.exports = Browser;
 
-},{}],213:[function(require,module,exports){
+},{}],219:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -33126,7 +33210,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var CodeMirror = require("codemirror");
-var resources = require("../resources");
+var examples = require("../examples");
 
 require("codemirror/mode/javascript/javascript");
 
@@ -33141,7 +33225,8 @@ var CodeEditor = function () {
     this._example = CodeMirror.fromTextArea(document.getElementById("example"), {
       mode: "javascript", lineNumbers: true
     });
-    this._selected = null;
+    this._soundName = "";
+    this._exampleId = -1;
   }
 
   _createClass(CodeEditor, [{
@@ -33152,10 +33237,10 @@ var CodeEditor = function () {
           return this.run();
         case "CLEAR":
           return this.clear();
-        case "SELECT_SOUND":
-          return this.selectSound(action.sound);
-        case "SELECT_EXAMPLE":
-          return this.selectExample(action.index);
+        case "SELECT_SOUND_NAME":
+          return this.selectSoundName(action.name);
+        case "SELECT_EXAMPLE_ID":
+          return this.selectExampleId(action.index);
       }
     }
   }, {
@@ -33164,37 +33249,39 @@ var CodeEditor = function () {
   }, {
     key: "run",
     value: function run() {
-      var sound = toFunction(this._sound.getValue());
-      var example = toFunction(this._example.getValue());
+      var soundFn = toFunction(this._sound.getValue());
+      var exampleFn = toFunction(this._example.getValue());
 
-      if (sound !== null && example !== null) {
-        this.actions.execute(sound, example);
+      if (soundFn !== null && exampleFn !== null) {
+        this.actions.execute(soundFn, exampleFn);
       }
     }
   }, {
     key: "clear",
     value: function clear() {
-      this._selected = null;
+      this._soundName = "";
+      this._exampleId = -1;
       this._sound.setValue("");
       this._example.setValue("");
     }
   }, {
-    key: "selectSound",
-    value: function selectSound(sound) {
-      if (!resources[sound]) {
+    key: "selectSoundName",
+    value: function selectSoundName(name) {
+      this._soundName = name;
+      if (!examples[this._soundName]) {
         return this.clear();
       }
-      this._selected = resources[sound];
-      this._sound.setValue(this._selected.sound.toString());
-      this._example.setValue("");
+      this._sound.setValue(examples[this._soundName].sound.toString());
+      this.selectExampleId(this._exampleId);
     }
   }, {
-    key: "selectExample",
-    value: function selectExample(index) {
-      if (!this._selected) {
+    key: "selectExampleId",
+    value: function selectExampleId(index) {
+      this._exampleId = index;
+      if (!examples[this._soundName] || !examples[this._soundName].examples[this._exampleId]) {
         return this._example.setValue("");
       }
-      this._example.setValue((this._selected.examples[index] || "").toString());
+      this._example.setValue(examples[this._soundName].examples[this._exampleId].toString());
     }
   }]);
 
@@ -33216,7 +33303,7 @@ function toFunction(code) {
 module.exports = CodeEditor;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../resources":208,"codemirror":2,"codemirror/mode/javascript/javascript":3}],214:[function(require,module,exports){
+},{"../examples":206,"codemirror":2,"codemirror/mode/javascript/javascript":3}],220:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -33243,7 +33330,7 @@ var SoundPreview = function () {
     value: function doAction(action) {
       switch (action.type) {
         case "EXECUTE":
-          return this.execute(action.sound, action.example);
+          return this.execute(action.soundFn, action.exampleFn);
         case "STOP":
           return this.reset();
         case "RESET":
@@ -33255,10 +33342,10 @@ var SoundPreview = function () {
     value: function setState() {}
   }, {
     key: "execute",
-    value: function execute(sound, example) {
+    value: function execute(soundFn, exampleFn) {
       this.reset();
       try {
-        example(this.audioContext, sound);
+        exampleFn(this.audioContext, soundFn);
       } catch (e) {
         global.console.error(e);
         this.actions.stop();
@@ -33297,4 +33384,4 @@ var SoundPreview = function () {
 module.exports = SoundPreview;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../timerAPI":210}]},{},[203]);
+},{"../timerAPI":216}]},{},[209]);
