@@ -1,7 +1,7 @@
 "use strict";
 
 const CodeMirror = require("codemirror");
-const resources = require("../resources");
+const examples = require("../examples");
 
 require("codemirror/mode/javascript/javascript");
 
@@ -23,21 +23,21 @@ class CodeEditor {
       return this.run();
     case "CLEAR":
       return this.clear();
-    case "SELECT_SOUND":
-      return this.selectSound(action.sound);
-    case "SELECT_EXAMPLE":
-      return this.selectExample(action.index);
+    case "SELECT_SOUND_NAME":
+      return this.selectSoundName(action.name);
+    case "SELECT_EXAMPLE_ID":
+      return this.selectExampleId(action.index);
     }
   }
 
   setState() {}
 
   run() {
-    const sound = toFunction(this._sound.getValue());
-    const example = toFunction(this._example.getValue());
+    const soundFn = toFunction(this._sound.getValue());
+    const exampleFn = toFunction(this._example.getValue());
 
-    if (sound !== null && example !== null) {
-      this.actions.execute(sound, example);
+    if (soundFn !== null && exampleFn !== null) {
+      this.actions.execute(soundFn, exampleFn);
     }
   }
 
@@ -47,16 +47,16 @@ class CodeEditor {
     this._example.setValue("");
   }
 
-  selectSound(sound) {
-    if (!resources[sound]) {
+  selectSoundName(name) {
+    if (!examples[name]) {
       return this.clear();
     }
-    this._selected = resources[sound];
+    this._selected = examples[name];
     this._sound.setValue(this._selected.sound.toString());
     this._example.setValue("");
   }
 
-  selectExample(index) {
+  selectExampleId(index) {
     if (!this._selected) {
       return this._example.setValue("");
     }

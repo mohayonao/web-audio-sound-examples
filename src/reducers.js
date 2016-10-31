@@ -1,9 +1,9 @@
 "use strict";
 
 const initState = {
-  preview: false,
-  sound  : "",
-  example: -1,
+  preview  : false,
+  soundName: "",
+  exampleId: -1,
 };
 
 module.exports = (state = initState, action) => {
@@ -11,13 +11,13 @@ module.exports = (state = initState, action) => {
   case "STOP":
     return Object.assign({}, state, { preview: false });
   case "CLEAR":
-    return Object.assign({}, state, { sound: "", example: -1, preview: false });
+    return Object.assign({}, state, { soundName: "", exampleId: -1, preview: false });
   case "EXECUTE":
     return Object.assign({}, state, { preview: true });
-  case "SELECT_SOUND":
-    return Object.assign({}, state, { sound: action.sound, example: -1 });
-  case "SELECT_EXAMPLE":
-    return Object.assign({}, state, { example: action.index });
+  case "SELECT_SOUND_NAME":
+    return Object.assign({}, state, { soundName: action.name, exampleId: -1 });
+  case "SELECT_EXAMPLE_ID":
+    return Object.assign({}, state, { exampleId: action.index });
   }
   return state;
 };

@@ -5,13 +5,13 @@ const classNames = require("classnames");
 
 class SoundSelector extends React.Component {
   shouldComponentUpdate(nextProps) {
-    return this.props.sound !== nextProps.sound;
+    return this.props.soundName !== nextProps.soundName;
   }
 
   render() {
-    const { resources, sound, onChange } = this.props;
-    const elems = Object.keys(resources).map((name, i) => {
-      const className = classNames({ selected: name === sound });
+    const { examples, soundName, onChange } = this.props;
+    const elems = Object.keys(examples).map((name, i) => {
+      const className = classNames({ selected: name === soundName });
       const onClick = () => onChange(name);
 
       return (
@@ -29,8 +29,8 @@ class SoundSelector extends React.Component {
 }
 
 SoundSelector.propTypes = {
-  resources: React.PropTypes.object.isRequired,
-  sound    : React.PropTypes.string.isRequired,
+  examples : React.PropTypes.object.isRequired,
+  soundName: React.PropTypes.string.isRequired,
   onChange : React.PropTypes.func.isRequired,
 };
 

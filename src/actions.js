@@ -10,13 +10,13 @@ module.exports = {
   clear() {
     return { type: "CLEAR" };
   },
-  execute(sound, example) {
-    return { type: "EXECUTE", sound, example };
+  execute(soundFn, exampleFn) {
+    return { type: "EXECUTE", soundFn, exampleFn };
   },
-  selectSound(sound) {
-    return { type: "SELECT_SOUND", sound };
+  selectSoundName(name) {
+    return { type: "SELECT_SOUND_NAME", name };
   },
-  selectExample(index) {
-    return { type: "SELECT_EXAMPLE", index };
+  selectExampleId(index) {
+    return { type: "SELECT_EXAMPLE_ID", index };
   }
 };

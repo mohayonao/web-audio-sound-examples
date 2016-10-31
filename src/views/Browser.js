@@ -23,11 +23,11 @@ class Browser {
     const items = this.window.location.hash.slice(1).split("/");
 
     if (items.length === 1) {
-      this.actions.selectSound(items[0]);
+      this.actions.selectSoundName(items[0]);
     }
     if (items.length === 2) {
-      this.actions.selectSound(items[0]);
-      this.actions.selectExample(items[1] - 1);
+      this.actions.selectSoundName(items[0]);
+      this.actions.selectExampleId(items[1] - 1);
     }
 
     this.window.onhashchange = this.onhashchange;
@@ -36,10 +36,10 @@ class Browser {
   setLocationHash(state) {
     let hash = "";
 
-    if (state.example !== -1) {
-      hash = `${ state.sound }/${ state.example + 1 }`;
+    if (state.exampleId !== -1) {
+      hash = `${ state.soundName }/${ state.exampleId + 1 }`;
     } else {
-      hash = `${ state.sound }`;
+      hash = `${ state.soundName }`;
     }
 
     this.window.onhashchange = null;

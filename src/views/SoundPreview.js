@@ -15,7 +15,7 @@ class SoundPreview {
   doAction(action) {
     switch (action.type) {
     case "EXECUTE":
-      return this.execute(action.sound, action.example);
+      return this.execute(action.soundFn, action.exampleFn);
     case "STOP":
       return this.reset();
     case "RESET":
@@ -25,10 +25,10 @@ class SoundPreview {
 
   setState() {}
 
-  execute(sound, example) {
+  execute(soundFn, exampleFn) {
     this.reset();
     try {
-      example(this.audioContext, sound);
+      exampleFn(this.audioContext, soundFn);
     } catch (e) {
       global.console.error(e);
       this.actions.stop();

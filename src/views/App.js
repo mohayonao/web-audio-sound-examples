@@ -2,7 +2,7 @@
 
 const React = require("react");
 const { connect } = require("react-redux");
-const resources = require("../resources");
+const examples = require("../examples");
 const MasterCtrl = require("../components/MasterCtrl");
 const SoundSelector = require("../components/SoundSelector");
 const ExampleSelector = require("../components/ExampleSelector");
@@ -10,15 +10,15 @@ const ExampleSelector = require("../components/ExampleSelector");
 class App extends React.Component {
   render() {
     const { actions } = this.props;
-    const selectSound   = name  => actions.selectSound(name);
-    const selectExample = index => actions.selectExample(index);
+    const selectSoundName = name  => actions.selectSoundName(name);
+    const selectExampleId = index => actions.selectExampleId(index);
     const onClick = actionName => actions[actionName]();
 
     return (
       <div className="app-container">
         <MasterCtrl { ...this.props } onClick={ onClick }/>
-        <SoundSelector { ...this.props } resources={ resources } onChange={ selectSound }/>
-        <ExampleSelector { ...this.props } resources={ resources } onChange={ selectExample }/>
+        <SoundSelector { ...this.props } examples={ examples } onChange={ selectSoundName }/>
+        <ExampleSelector { ...this.props } examples={ examples } onChange={ selectExampleId }/>
       </div>
     );
   }

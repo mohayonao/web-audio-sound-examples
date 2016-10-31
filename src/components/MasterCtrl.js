@@ -5,12 +5,12 @@ const classNames = require("classnames");
 
 class MasterCtrl extends React.Component {
   shouldComponentUpdate(nextProps) {
-    return this.props.preview !== nextProps.preview || this.props.example !== nextProps.example;
+    return this.props.preview !== nextProps.preview || this.props.exampleId !== nextProps.exampleId;
   }
 
   render() {
-    const { preview, example, onClick } = this.props;
-    const runClassName  = classNames("btn", { "btn-run" : example !== -1 });
+    const { preview, exampleId, onClick } = this.props;
+    const runClassName  = classNames("btn", { "btn-run" : exampleId !== -1 });
     const stopClassName = classNames("btn", { "btn-stop": preview });
 
     return (
@@ -27,9 +27,9 @@ class MasterCtrl extends React.Component {
 }
 
 MasterCtrl.propTypes = {
-  preview: React.PropTypes.bool.isRequired,
-  example: React.PropTypes.number.isRequired,
-  onClick: React.PropTypes.func.isRequired,
+  preview  : React.PropTypes.bool.isRequired,
+  exampleId: React.PropTypes.number.isRequired,
+  onClick  : React.PropTypes.func.isRequired,
 };
 
 module.exports = MasterCtrl;
