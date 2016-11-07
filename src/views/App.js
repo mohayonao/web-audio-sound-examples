@@ -3,6 +3,7 @@
 const React = require("react");
 const { connect } = require("react-redux");
 const examples = require("../examples");
+const AnalyserView = require("../components/AnalyserView");
 const MasterCtrl = require("../components/MasterCtrl");
 const SoundSelector = require("../components/SoundSelector");
 const ExampleSelector = require("../components/ExampleSelector");
@@ -16,6 +17,7 @@ class App extends React.Component {
 
     return (
       <div className="app-container">
+        <AnalyserView { ...this.props }/>
         <MasterCtrl { ...this.props } onClick={ onClick }/>
         <SoundSelector { ...this.props } examples={ examples } onChange={ selectSoundName }/>
         <ExampleSelector { ...this.props } examples={ examples } onChange={ selectExampleId }/>

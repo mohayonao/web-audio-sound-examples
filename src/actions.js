@@ -21,5 +21,8 @@ module.exports = {
   },
   selectExampleId(index) {
     return { type: "SELECT_EXAMPLE_ID", index };
+  },
+  setFloatTimeDomainData(array) {
+    return { type: "SET_FLOAT_TIME_DOMAIN_DATA", array };
   }
 };
