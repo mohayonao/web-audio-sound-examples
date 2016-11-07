@@ -32207,10 +32207,81 @@ module.exports = {
   },
   selectExampleId: function selectExampleId(index) {
     return { type: "SELECT_EXAMPLE_ID", index: index };
+  },
+  setFloatTimeDomainData: function setFloatTimeDomainData(array) {
+    return { type: "SET_FLOAT_TIME_DOMAIN_DATA", array: array };
   }
 };
 
 },{}],199:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require("react");
+
+var AnalyserView = function (_React$Component) {
+  _inherits(AnalyserView, _React$Component);
+
+  function AnalyserView() {
+    _classCallCheck(this, AnalyserView);
+
+    return _possibleConstructorReturn(this, (AnalyserView.__proto__ || Object.getPrototypeOf(AnalyserView)).apply(this, arguments));
+  }
+
+  _createClass(AnalyserView, [{
+    key: "shouldComponentUpdate",
+    value: function shouldComponentUpdate(nextProps) {
+      return this.props.timeDomainData !== nextProps.timeDomainData;
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var timeDomainData = this.props.timeDomainData;
+
+      var line = null;
+
+      if (timeDomainData.length !== 0) {
+        var d = "";
+
+        for (var i = 0, imax = timeDomainData.length; i < imax; i++) {
+          var x = i / imax * 100;
+          var y = linlin(timeDomainData[i], -0.4, 0.4, 100, 0);
+
+          d += (i === 0 ? "M" : "L") + " " + x + " " + y + " ";
+        }
+
+        line = React.createElement("path", { d: d, fill: "transparent", strokeWidth: 1, stroke: "#f1c40f" });
+      }
+
+      return React.createElement(
+        "svg",
+        { className: "analyser-view", viewBox: "0 0 100 100", preserveAspectRatio: "none" },
+        line
+      );
+    }
+  }]);
+
+  return AnalyserView;
+}(React.Component);
+
+AnalyserView.propTypes = {
+  timeDomainData: React.PropTypes.any.isRequired
+};
+
+function linlin(value, inMin, inMax, outMin, outMax) {
+  return (value - inMin) / (inMax - inMin) * (outMax - outMin) + outMin;
+}
+
+module.exports = AnalyserView;
+
+},{"react":187}],200:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -32295,7 +32366,7 @@ ExampleSelector.propTypes = {
 
 module.exports = ExampleSelector;
 
-},{"classnames":1,"react":187}],200:[function(require,module,exports){
+},{"classnames":1,"react":187}],201:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -32386,7 +32457,7 @@ MasterCtrl.propTypes = {
 
 module.exports = MasterCtrl;
 
-},{"classnames":1,"react":187}],201:[function(require,module,exports){
+},{"classnames":1,"react":187}],202:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -32463,7 +32534,7 @@ SoundSelector.propTypes = {
 
 module.exports = SoundSelector;
 
-},{"classnames":1,"react":187}],202:[function(require,module,exports){
+},{"classnames":1,"react":187}],203:[function(require,module,exports){
 "use strict";
 
 function example01(audioContext, beep) {
@@ -32509,7 +32580,7 @@ module.exports = {
   examples: [example01, example02, example03]
 };
 
-},{"../sounds/beep":211}],203:[function(require,module,exports){
+},{"../sounds/beep":212}],204:[function(require,module,exports){
 "use strict";
 
 function example01(audioContext, coin) {
@@ -32541,7 +32612,7 @@ module.exports = {
   examples: [example01, example02]
 };
 
-},{"../sounds/coin":212}],204:[function(require,module,exports){
+},{"../sounds/coin":213}],205:[function(require,module,exports){
 "use strict";
 
 function example01(audioContext, fmbell) {
@@ -32573,7 +32644,7 @@ module.exports = {
   examples: [example01, example02]
 };
 
-},{"../sounds/fm-bell":213}],205:[function(require,module,exports){
+},{"../sounds/fm-bell":214}],206:[function(require,module,exports){
 "use strict";
 
 function example01(audioContext, hihat) {
@@ -32670,7 +32741,7 @@ module.exports = {
   examples: [example01, example02, example03]
 };
 
-},{"../sounds/hihat":214}],206:[function(require,module,exports){
+},{"../sounds/hihat":215}],207:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -32681,7 +32752,7 @@ module.exports = {
   "fm-bell": require("./fm-bell")
 };
 
-},{"./beep":202,"./coin":203,"./fm-bell":204,"./hihat":205,"./swell":207}],207:[function(require,module,exports){
+},{"./beep":203,"./coin":204,"./fm-bell":205,"./hihat":206,"./swell":208}],208:[function(require,module,exports){
 "use strict";
 
 function example01(audioContext, swell) {
@@ -32729,7 +32800,7 @@ module.exports = {
   examples: [example01, example02, example03]
 };
 
-},{"../sounds/swell":215}],208:[function(require,module,exports){
+},{"../sounds/swell":216}],209:[function(require,module,exports){
 "use strict";
 
 module.exports = function (func) {
@@ -32742,7 +32813,7 @@ module.exports = function (func) {
   };
 };
 
-},{}],209:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -32801,13 +32872,14 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./actions":198,"./inject":208,"./reducers":210,"./views/App":217,"./views/Browser":218,"./views/CodeEditor":219,"./views/SoundPreview":220,"react":187,"react-dom":37,"react-redux":40,"redux":193}],210:[function(require,module,exports){
+},{"./actions":198,"./inject":209,"./reducers":211,"./views/App":218,"./views/Browser":219,"./views/CodeEditor":220,"./views/SoundPreview":221,"react":187,"react-dom":37,"react-redux":40,"redux":193}],211:[function(require,module,exports){
 "use strict";
 
 var initState = {
   preview: false,
   soundName: "",
-  exampleId: -1
+  exampleId: -1,
+  timeDomainData: []
 };
 
 module.exports = function () {
@@ -32825,11 +32897,13 @@ module.exports = function () {
       return Object.assign({}, state, { soundName: action.name });
     case "SELECT_EXAMPLE_ID":
       return Object.assign({}, state, { exampleId: action.index });
+    case "SET_FLOAT_TIME_DOMAIN_DATA":
+      return Object.assign({}, state, { timeDomainData: action.array });
   }
   return state;
 };
 
-},{}],211:[function(require,module,exports){
+},{}],212:[function(require,module,exports){
 "use strict";
 
 function beep(destination, playbackTime, opts) {
@@ -32853,7 +32927,7 @@ function beep(destination, playbackTime, opts) {
 
 module.exports = beep;
 
-},{}],212:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 "use strict";
 
 function coin(destination, playbackTime, opts) {
@@ -32881,7 +32955,7 @@ function coin(destination, playbackTime, opts) {
 
 module.exports = coin;
 
-},{}],213:[function(require,module,exports){
+},{}],214:[function(require,module,exports){
 "use strict";
 
 function fmbell(destination, playbackTime, opts) {
@@ -32927,7 +33001,7 @@ function fmbell(destination, playbackTime, opts) {
 
 module.exports = fmbell;
 
-},{}],214:[function(require,module,exports){
+},{}],215:[function(require,module,exports){
 "use strict";
 
 function hihat(destination, playbackTime, opts) {
@@ -32959,7 +33033,7 @@ function hihat(destination, playbackTime, opts) {
 
 module.exports = hihat;
 
-},{}],215:[function(require,module,exports){
+},{}],216:[function(require,module,exports){
 "use strict";
 
 function swell(destination, playbackTime, opts) {
@@ -32997,7 +33071,7 @@ function swell(destination, playbackTime, opts) {
 
 module.exports = swell;
 
-},{}],216:[function(require,module,exports){
+},{}],217:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -33060,7 +33134,7 @@ module.exports = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],217:[function(require,module,exports){
+},{}],218:[function(require,module,exports){
 "use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -33079,6 +33153,7 @@ var _require = require("react-redux"),
     connect = _require.connect;
 
 var examples = require("../examples");
+var AnalyserView = require("../components/AnalyserView");
 var MasterCtrl = require("../components/MasterCtrl");
 var SoundSelector = require("../components/SoundSelector");
 var ExampleSelector = require("../components/ExampleSelector");
@@ -33110,6 +33185,7 @@ var App = function (_React$Component) {
       return React.createElement(
         "div",
         { className: "app-container" },
+        React.createElement(AnalyserView, this.props),
         React.createElement(MasterCtrl, _extends({}, this.props, { onClick: onClick })),
         React.createElement(SoundSelector, _extends({}, this.props, { examples: examples, onChange: selectSoundName })),
         React.createElement(ExampleSelector, _extends({}, this.props, { examples: examples, onChange: selectExampleId }))
@@ -33128,7 +33204,7 @@ module.exports = connect(function (state) {
   return state;
 })(App);
 
-},{"../components/ExampleSelector":199,"../components/MasterCtrl":200,"../components/SoundSelector":201,"../examples":206,"react":187,"react-redux":40}],218:[function(require,module,exports){
+},{"../components/AnalyserView":199,"../components/ExampleSelector":200,"../components/MasterCtrl":201,"../components/SoundSelector":202,"../examples":207,"react":187,"react-redux":40}],219:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -33201,7 +33277,7 @@ var Browser = function () {
 
 module.exports = Browser;
 
-},{}],219:[function(require,module,exports){
+},{}],220:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -33303,7 +33379,7 @@ function toFunction(code) {
 module.exports = CodeEditor;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../examples":206,"codemirror":2,"codemirror/mode/javascript/javascript":3}],220:[function(require,module,exports){
+},{"../examples":207,"codemirror":2,"codemirror/mode/javascript/javascript":3}],221:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -33323,6 +33399,7 @@ var SoundPreview = function () {
     this._destination = audioContext.destination;
     this._gain = null;
     this._analyser = null;
+    this._timerId = 0;
   }
 
   _createClass(SoundPreview, [{
@@ -33343,9 +33420,17 @@ var SoundPreview = function () {
   }, {
     key: "execute",
     value: function execute(soundFn, exampleFn) {
+      var _this = this;
+
       this.reset();
       try {
         exampleFn(this.audioContext, soundFn);
+        this._timerId = setInterval(function () {
+          var array = new Float32Array(_this._analyser.fftSize);
+
+          _this._analyser.getFloatTimeDomainData(array);
+          _this.actions.setFloatTimeDomainData(array);
+        }, 60);
       } catch (e) {
         global.console.error(e);
         this.actions.stop();
@@ -33359,6 +33444,10 @@ var SoundPreview = function () {
         this._analyser.disconnect();
       }
 
+      if (this._timerId !== 0) {
+        clearInterval(this._timerId);
+      }
+
       timerAPI.clearAllTimer();
 
       this._gain = this.audioContext.createGain();
@@ -33368,9 +33457,15 @@ var SoundPreview = function () {
       this._gain.channelCountMode = "explicit";
       this._gain.connect(this._analyser);
 
+      this._analyser.fftSize = 256;
       this._analyser.channelCount = 2;
       this._analyser.channelCountMode = "explicit";
       this._analyser.connect(this._destination);
+
+      if (typeof this._analyser.getFloatTimeDomainData !== "function") {
+        this._analyser.getFloatTimeDomainData = getFloatTimeDomainData;
+      }
+      this.actions.setFloatTimeDomainData([]);
 
       Object.defineProperty(this.audioContext, "destination", {
         value: this._gain, enumerable: false, writable: false, configurable: true
@@ -33381,7 +33476,17 @@ var SoundPreview = function () {
   return SoundPreview;
 }();
 
+function getFloatTimeDomainData(array) {
+  var uint8 = new Uint8Array(array.length);
+
+  this.getByteTimeDomainData(uint8);
+
+  for (var i = 0, imax = array.length; i < imax; i++) {
+    array[i] = (uint8[i] - 128) / 128;
+  }
+}
+
 module.exports = SoundPreview;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../timerAPI":216}]},{},[209]);
+},{"../timerAPI":217}]},{},[210]);
