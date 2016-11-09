@@ -22,7 +22,7 @@ module.exports = {
   selectExampleId(index) {
     return { type: "SELECT_EXAMPLE_ID", index };
   },
-  setFloatTimeDomainData(array) {
-    return { type: "SET_FLOAT_TIME_DOMAIN_DATA", array };
+  setAnalysedData(timeDomainL, timeDomainR, frequencyL, frequencyR) {
+    return { type: "SET_ANALYSED_DATA", data: { timeDomainL, timeDomainR, frequencyL, frequencyR } };
   }
 };

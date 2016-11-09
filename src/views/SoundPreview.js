@@ -1,9 +1,13 @@
 "use strict";
 
 const timerAPI = require("../timerAPI");
+const StereoPannerNode = require("stereo-panner-node");
+const StereoAnalyserNode = require("stereo-analyser-node");
 
 class SoundPreview {
   constructor(audioContext, actions) {
+    StereoPannerNode.polyfill();
+
     this.audioContext = audioContext;
     this.actions = actions;
 
@@ -30,12 +34,7 @@ class SoundPreview {
     this.reset();
     try {
       exampleFn(this.audioContext, soundFn);
-      this._timerId = setInterval(() => {
-        const array = new Float32Array(this._analyser.fftSize);
-
-        this._analyser.getFloatTimeDomainData(array);
-        this.actions.setFloatTimeDomainData(array);
-      }, 60);
+      this._timerId = setInterval(this.analyse.bind(this), 50);
     } catch (e) {
       global.console.error(e);
       this.actions.stop();
@@ -54,36 +53,43 @@ class SoundPreview {
 
     timerAPI.clearAllTimer();
 
+    this._bufSrc = this.audioContext.createBufferSource();
     this._gain = this.audioContext.createGain();
-    this._analyser = this.audioContext.createAnalyser();
+    this._analyser = new StereoAnalyserNode(this.audioContext);
 
     this._gain.channelCount = 2;
     this._gain.channelCountMode = "explicit";
+
+    this._analyser.channelCount = 2;
+    this._analyser.channelCountMode = "explicit";
+
+    this._bufSrc.buffer = this.audioContext.createBuffer(1, 128, this.audioContext.sampleRate);
+    this._bufSrc.loop = true;
+    this._bufSrc.start(this.audioContext.currentTime);
+    this._bufSrc.connect(this._gain);
+
     this._gain.connect(this._analyser);
 
     this._analyser.fftSize = 256;
-    this._analyser.channelCount = 2;
-    this._analyser.channelCountMode = "explicit";
     this._analyser.connect(this._destination);
 
-    if (typeof this._analyser.getFloatTimeDomainData !== "function") {
-      this._analyser.getFloatTimeDomainData = getFloatTimeDomainData;
-    }
-    this.actions.setFloatTimeDomainData([]);
+    this.actions.setAnalysedData([], [], [], []);
 
     Object.defineProperty(this.audioContext, "destination", {
       value: this._gain, enumerable: false, writable: false, configurable: true
     });
   }
-}
 
-function getFloatTimeDomainData(array) {
-  const uint8 = new Uint8Array(array.length);
+  analyse() {
+    const timeDomainL = new Float32Array(this._analyser.fftSize);
+    const timeDomainR = new Float32Array(this._analyser.fftSize);
+    const frequencyL = new Float32Array(this._analyser.frequencyBinCount);
+    const frequencyR = new Float32Array(this._analyser.frequencyBinCount);
 
-  this.getByteTimeDomainData(uint8);
+    this._analyser.getFloatTimeDomainData(timeDomainL, timeDomainR);
+    this._analyser.getFloatFrequencyData(frequencyL, frequencyR);
 
-  for (let i = 0, imax = array.length; i < imax; i++) {
-    array[i] = (uint8[i] - 128) / 128;
+    this.actions.setAnalysedData(timeDomainL, timeDomainR, frequencyL, frequencyR);
   }
 }
 

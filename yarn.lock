@@ -680,6 +680,10 @@ balanced-match@^0.4.1:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-0.4.2.tgz#cb3f3e3c732dc0f01ee70b403f302e61d7709838"
 
+base-audio-context@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/base-audio-context/-/base-audio-context-1.0.3.tgz#f152e59f5b7f7e854e4207b00a84a82316ca3c35"
+
 base64-js@^1.0.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.2.0.tgz#a39992d723584811982be5e290bb6a53d86700f1"
@@ -3316,6 +3320,16 @@ sshpk@^1.7.0:
     jodid25519 "^1.0.0"
     jsbn "~0.1.0"
     tweetnacl "~0.14.0"
+
+stereo-analyser-node@0.2:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/stereo-analyser-node/-/stereo-analyser-node-0.2.0.tgz#cf38b4df82356c034fff0e10d78400620997335f"
+
+stereo-panner-node:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/stereo-panner-node/-/stereo-panner-node-1.1.0.tgz#986fd5ecfb04e52cb0bb6bb502752afe3487ab2c"
+  dependencies:
+    base-audio-context "^1.0.3"
 
 stream-browserify@^2.0.0:
   version "2.0.1"

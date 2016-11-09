@@ -4,7 +4,12 @@ const initState = {
   preview  : false,
   soundName: "",
   exampleId: -1,
-  timeDomainData: [],
+  analysedData: {
+    timeDomainL: [],
+    timeDomainR: [],
+    frequencyL: [],
+    frequencyR: [],
+  },
 };
 
 module.exports = (state = initState, action) => {
@@ -19,8 +24,8 @@ module.exports = (state = initState, action) => {
     return Object.assign({}, state, { soundName: action.name });
   case "SELECT_EXAMPLE_ID":
     return Object.assign({}, state, { exampleId: action.index });
-  case "SET_FLOAT_TIME_DOMAIN_DATA":
-    return Object.assign({}, state, { timeDomainData: action.array });
+  case "SET_ANALYSED_DATA":
+    return Object.assign({}, state, { analysedData: action.data });
   }
   return state;
 };
