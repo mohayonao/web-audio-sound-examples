@@ -11,8 +11,8 @@ function coin(destination, playbackTime, opts) {
   const volume = opts.volume || 0.25;
 
   oscillator.type = "square";
-  oscillator.frequency.setValueAtTime(987.7666025122483, t0);
-  oscillator.frequency.setValueAtTime(1318.5102276514797, t1);
+  oscillator.frequency.setValueAtTime(990, t0);
+  oscillator.frequency.setValueAtTime(1320, t1);
   oscillator.start(t0);
   oscillator.stop(t2);
   oscillator.connect(gain);
