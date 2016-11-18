@@ -2,11 +2,13 @@
 
 const timerAPI = require("../timerAPI");
 const StereoPannerNode = require("stereo-panner-node");
+const ConstantSourceNode = require("constant-source-node");
 const StereoAnalyserNode = require("stereo-analyser-node");
 
 class SoundPreview {
   constructor(audioContext, actions) {
     StereoPannerNode.polyfill();
+    ConstantSourceNode.polyfill();
 
     this.audioContext = audioContext;
     this.actions = actions;
